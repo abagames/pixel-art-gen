@@ -1,0 +1,328 @@
+<!doctype html>
+<html>
+
+<head>
+  <meta name="viewport" content="width=device-width, height=device-height,
+  user-scalable=no, initial-scale=1, maximum-scale=1">
+  <title>pixel art gen</title>
+  <link rel="stylesheet" href="index.css" type="text/css" />
+</head>
+
+<body>
+  <script src="./libs/pag/index.js"></script>
+  <script src="./libs/sss/index.js"></script>
+  <script src="./libs/p5/p5.min.js"></script>
+  <script>
+var isInGame = false;
+var rotationNum = 16;
+var actors = [];
+var player = null;
+var ticks = 0;
+var score = 0;
+var addingScore = 1;
+var isTouched = false;
+var context;
+function setup() {
+  sss.init(0);
+  enableShowingErrors()
+  initSeedUi(onSeedChanged);
+  var canvas = createCanvas(128, 128).canvas;
+  canvas.style.width = canvas.style.height = '512px';
+  context = canvas.getContext('2d');
+  noStroke();
+  // set the default options
+  pag.defaultOptions.isMirrorY = true;
+  pag.defaultOptions.rotationNum = rotationNum;
+  pag.defaultOptions.scale = 2;
+  setStars();
+}
+function touchStarted() {
+  sss.playEmpty();
+  if (!isInGame && ticks > 0) {
+    isInGame = true;
+    score = ticks = 0;
+    addingScore = 1;
+    sss.playBgm();
+    setPlayer();
+  }
+  isTouched = true;
+}
+function touchMoved() {
+  return false;
+}
+function draw() {
+  sss.update();
+  background(0);
+  var df = Math.sqrt(ticks / 1000 + 1);
+  if (random() < 0.03 * df) {
+    setEnemy();
+  }
+  actors.sort(function(a, b) { return a.priority - b.priority });
+  forEach(actors, function(a) {
+    a.update();
+    a.pos.x += a.vel.x;
+    a.pos.y += a.vel.y;
+    if (a.pos.x < -48 || a.pos.x > 176 || a.pos.y < -48 || a.pos.y > 176) {
+      a.isAlive = false;
+      if (a.name === 'shot') {
+        addingScore = 1;
+      }
+    }
+    drawPixels(a);
+  });
+  for (var i = 0; i < actors.length;) {
+    if (actors[i].isAlive === false) {
+      actors.splice(i, 1);
+    } else {
+      i++;
+    }
+  }
+  fill('#ace');
+  textSize(9);
+  text(score, 5, 10);
+  text('+' + addingScore, 5, 20);
+  ticks++;
+};
+var setPlayer = function() {
+  if (player != null) {
+    player.isAlive = false;
+  }
+  player = {};
+  // generate a pixel art
+  // (with the default options {isMirrorY: true, rotationNum: 16, scale: 2})
+  // each character in the string array of the 1st arg represents a pixel type
+  // 'x': a body or an edge
+  // '-': a body or an empty
+  // 'o': an edge
+  // '*': a body
+  player.pixels = pag.generate([
+    ' x',
+    'xxxx'
+  ]);
+  player.pos = { x: 64, y: 64 };
+  player.vel = { x: 0, y: 0 };
+  player.angle = 0;
+  player.update = function () {
+    this.angle = Math.atan2(mouseY / 4 - this.pos.y, mouseX / 4 - this.pos.x);
+    if (isTouched) {
+      isTouched = false;
+      var shot = {};
+      shot.pixels = pag.generate([
+        'xxx'
+      ], { isMirrorY: false });
+      shot.pos = { x: this.pos.x, y: this.pos.y };
+      shot.angle = this.angle;
+      var speed = 3;
+      shot.vel = { x: Math.cos(this.angle) * speed, y: Math.sin(this.angle) * speed };
+      var self = shot;
+      shot.update = function () {
+        forEach(getActors('enemy'), function(e) {
+          var ox = e.pos.x - self.pos.x;
+          var oy = e.pos.y - self.pos.y;
+          if (Math.sqrt(ox * ox + oy * oy) < 10) {
+            self.isAlive = false;
+            e.isAlive = false;
+            setParticles(5, e.pos);
+            sss.play('h1', 4);
+            score += addingScore;
+            addingScore++;
+          }
+        });
+      };
+      shot.name = 'shot';
+      shot.priority = -1;
+      actors.push(shot);
+      setParticles(2, this.pos, this.angle);
+      sss.play('s1');
+      this.vel.x = -shot.vel.x;
+      this.vel.y = -shot.vel.y;
+    }
+    this.vel.x *= 0.7;
+    this.vel.y *= 0.7;
+    var vx = (64 - this.pos.x) * 0.1;
+    var vy = (64 - this.pos.y) * 0.1;
+    forEach(actors, function(a) {
+      a.pos.x += vx;
+      a.pos.y += vy;
+    });
+  };
+  player.priority = 0;
+  actors.push(player);
+};
+var setEnemy = function() {
+  var enemy = {};
+  // specify the options in the 2nd arg
+  enemy.pixels = pag.generate([
+    ' x',
+    'xx',
+  ], { isMirrorX: true });
+  enemy.pos = { x: random(-32, 160), y: random() < 0.5 ? -32 : 160 };
+  if (random() < 0.5) {
+    var tx = enemy.pos.x;
+    enemy.pos.x = enemy.pos.y;
+    enemy.pos.y = tx;
+  }
+  enemy.vel = { x: random(-0.1, 0.1), y: random(-0.1, 0.1) };
+  enemy.angle = 0;
+  var self = enemy;
+  enemy.update = function () {
+    if (player != null) {
+      var df = Math.sqrt(ticks / 1000 + 1);
+      self.vel.x += (player.pos.x - self.pos.x) * 0.0001 * df;
+      self.vel.y += (player.pos.y - self.pos.y) * 0.0001 * df;
+      var ox = self.pos.x - player.pos.x;
+      var oy = self.pos.y - player.pos.y;
+      if (Math.sqrt(ox * ox + oy * oy) < 10) {
+        isInGame = false;
+        setParticles(30, player.pos);
+        sss.play('u1', 5);
+        sss.stopBgm();
+        player.isAlive = false;
+        player = null;
+        ticks = -60;
+      }
+    } else {
+      this.vel.y += 0.01;
+    }
+    this.vel.x *= 0.99;
+    this.vel.y *= 0.99;
+  };
+  enemy.name = 'enemy';
+  enemy.priority = 1;
+  actors.push(enemy);
+};
+var setParticles = function(num, pos, angle) {
+  for (var i = 0; i < num; i++) {
+    var part = {};
+    part.pixels = pag.generate([
+      'x',
+    ], { isMirrorX: true, colorLighting: 0.5, edgeDarkness: 0.8, value: 0.8 });
+    part.pos = { x: pos.x, y: pos.y };
+    if (angle == null) {
+      part.angle = random(Math.PI * 2);
+    } else {
+      part.angle = angle + random(-0.5, 0.5);
+    }
+    var speed = random(0.5, 1);
+    part.vel = { x: Math.cos(part.angle) * speed, y: Math.sin(part.angle) * speed };
+    part.ticks = random(15, 30);
+    part.update = function () {
+      this.vel.x *= 0.98;
+      this.vel.y *= 0.98;
+      if (this.ticks-- < 0) {
+        this.isAlive = false;
+      }
+    }
+    part.priority = -2;
+    actors.push(part);
+  }
+};
+var setStars = function() {
+  for (var i = 0; i < 32; i++) {
+    var star = {};
+    star.pixels = pag.generate([
+      'o'
+    ], { isMirrorY: false, hue: random(), saturation: 0.4 });
+    star.pos = { x: random(-16, 132), y: random(-16, 132) };
+    star.vel = { x: 0, y: 0 };
+    star.angle = 0;
+    star.update = function () {
+      if (this.pos.x < -16) {
+        this.pos.x = 160 + this.pos.x;
+      }
+      if (this.pos.x > 132) {
+        this.pos.x = -160 + this.pos.x;
+      }
+      if (this.pos.y < -16) {
+        this.pos.y = 160 + this.pos.y;
+      }
+      if (this.pos.y > 132) {
+        this.pos.y = -160 + this.pos.y;
+      }
+    };
+    star.priority = -3;
+    actors.push(star);
+  }
+};
+// draw a generated pixels
+function drawPixels(actor) {
+  var a = actor.angle;
+  if (a < 0) {
+    a = Math.PI * 2 - Math.abs(a);
+  }
+  var pxs = actor.pixels[Math.round(a / (Math.PI * 2 / rotationNum)) % rotationNum];
+  var pw = pxs.length;
+  var ph = pxs[0].length;
+  var sbx = Math.floor(actor.pos.x - pw / 2);
+  var sby = Math.floor(actor.pos.y - ph / 2);
+  for (var y = 0, sy = sby; y < ph; y++ , sy++) {
+    for (var x = 0, sx = sbx; x < pw; x++ , sx++) {
+      var px = pxs[x][y];
+      if (!px.isEmpty) {
+        context.fillStyle = px.style;
+        context.fillRect(sx, sy, 1, 1);
+      }
+    }
+  }
+}
+function getActors(name) {
+  var result = [];
+  forEach(actors, function(a) {
+    if (a.name === name) {
+      result.push(a);
+    }
+  });
+  return result;
+}
+function forEach(array, func) {
+  for (var i = 0; i < array.length; i++) {
+    func(array[i]);
+  }
+}
+var onSeedChanged = function(seed) {
+  // set the random seed to change a generated pixel art
+  pag.setSeed(seed);
+  sss.reset();
+  sss.setSeed(seed);
+  if (isInGame) {
+    sss.playBgm();
+    setPlayer();
+  }
+}
+function initSeedUi(onSeedChanged) {
+  var p = document.createElement('p');
+  p.innerHTML = '<button id="change">change</button>' +
+    'random seed: <input type="number" id="seed" value="0"></input>' +
+    '<button id="set">set</button>';
+  document.getElementsByTagName('body')[0].appendChild(p);
+  var changeElm = document.getElementById('change');
+  var seedElm = document.getElementById('seed');
+  var setElm = document.getElementById('set');
+  changeElm.onclick = function () {
+    seedElm.value = Math.floor(Math.random() * 9999999).toString();
+    onSeedChanging();
+  };
+  setElm.onclick = onSeedChanging;
+  function onSeedChanging() {
+    onSeedChanged(Number(seedElm.value));
+  }
+}
+function enableShowingErrors() {
+  var result = document.createElement('pre');
+  result.setAttribute('id', 'result');
+  document.getElementsByTagName('body')[0].appendChild(result);
+  window.addEventListener('error', function (error) {
+    var message = [error.filename, '@', error.lineno, ':\n', error.message].join('');
+    result.textContent += '\n' + message;
+    return false;
+  });
+}
+  </script>
+  <!--
+  <script src='../app/index.js'></script>
+  <script src="http://localhost:35729/livereload.js"></script>
+  -->
+  <p>[Click/Touch]: shot</p>
+</body>
+
+</html>
