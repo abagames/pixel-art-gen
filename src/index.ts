@@ -1,8 +1,8 @@
 import * as pag from './pag/index';
 import * as debug from './debug';
+import * as sss from 'sss';
 declare const require: any;
 const p5 = require('p5');
-const sss = require('sss');
 
 new p5(p => {
   let isInGame = false;
