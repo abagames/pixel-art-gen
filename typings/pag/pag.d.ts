@@ -1,5 +1,6 @@
 declare module 'pag' {
   function generate(pattern: string[], options?: PagOptions);
+  function setSeed(seed?: number);
   const defaultOptions: PagOptions;
 }
 
