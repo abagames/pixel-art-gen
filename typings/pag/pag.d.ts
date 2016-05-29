@@ -1,7 +1,14 @@
 declare module 'pag' {
-  function generate(pattern: string[], options?: PagOptions);
+  function generate(pattern: string[], options?: PagOptions): Pixel[][][];
   function setSeed(seed?: number);
   const defaultOptions: PagOptions;
+  interface Pixel {
+    r: number;
+    g: number;
+    b: number;
+    isEmpty: boolean;
+    style: string;
+  }
 }
 
 declare interface PagOptions {
