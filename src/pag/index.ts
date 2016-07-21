@@ -22,7 +22,7 @@ export function setSeed(_seed: number = 0) {
 }
 export function generate(patterns: string[], _options = {}) {
   (<any>_options).baseSeed = seed;
-  const jso = JSON.stringify(_options);
+  const jso = JSON.stringify({ patterns, options: _options });
   if (generatedPixels[jso]) {
     return generatedPixels[jso];
   }

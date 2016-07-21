@@ -91,7 +91,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	function generate(patterns, _options) {
 	    if (_options === void 0) { _options = {}; }
 	    _options.baseSeed = seed;
-	    var jso = JSON.stringify(_options);
+	    var jso = JSON.stringify({ patterns: patterns, options: _options });
 	    if (generatedPixels[jso]) {
 	        return generatedPixels[jso];
 	    }
