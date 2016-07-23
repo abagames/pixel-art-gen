@@ -577,7 +577,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    var cy = h / 2;
 	    var offset = { x: 0, y: 0 };
 	    return timesMap(rotationNum, function (ai) {
-	        var angle = ai * Math.PI * 2 / rotationNum;
+	        var angle = -ai * Math.PI * 2 / rotationNum;
 	        return timesMap(w, function (x) { return timesMap(h, function (y) {
 	            offset.x = x - cx;
 	            offset.y = y - cy;
@@ -600,7 +600,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    var random = new Random();
 	    random.setSeed(options.seed);
 	    return timesMap(w, function (x) { return timesMap(h, function (y) {
-	        var p = pixels[x][h - y - 1];
+	        var p = pixels[x][y];
 	        if ((p === 1 && !options.isShowingBody) ||
 	            (p === -1 && !options.isShowingEdge)) {
 	            return new Pixel();

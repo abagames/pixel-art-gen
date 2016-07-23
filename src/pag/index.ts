@@ -193,7 +193,7 @@ function createRotated(pixels: number[][], rotationNum: number) {
   const cy = h / 2;
   let offset = { x: 0, y: 0 };
   return timesMap(rotationNum, ai => {
-    const angle = ai * Math.PI * 2 / rotationNum;
+    const angle = -ai * Math.PI * 2 / rotationNum;
     return timesMap(w, x => timesMap(h, y => {
       offset.x = x - cx;
       offset.y = y - cy;
@@ -218,7 +218,7 @@ function createColored(pixels: number[][], options) {
   const random = new Random();
   random.setSeed(options.seed);
   return timesMap(w, x => timesMap(h, y => {
-    const p = pixels[x][h - y - 1];
+    const p = pixels[x][y];
     if ((p === 1 && !options.isShowingBody) ||
       (p === -1 && !options.isShowingEdge)) {
       return new Pixel();
