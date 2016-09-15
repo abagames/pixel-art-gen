@@ -1,13 +1,13 @@
 pixel-art-gen
 ======================
-Generete a pixel art from a simple pattern string.
+Generate a pixel art from a simple pattern string.
 (based on [pixel-sprite-generator](https://github.com/zfedoran/pixel-sprite-generator))
 
-Play [the demo](http://abagames.sakura.ne.jp/16/pag/) of the sample code.
+Play [the demo](https://abagames.github.io/pixel-art-gen/) of the sample code.
 
 ### How to use
 
-See the [sample code](https://github.com/abagames/pixel-art-gen/blob/master/www/index.html).
+See the [sample code](https://github.com/abagames/pixel-art-gen/blob/master/docs/index.html).
 ([p5.js](https://p5js.org/) is used for drawing.)
 
 Include pag/index.js script.

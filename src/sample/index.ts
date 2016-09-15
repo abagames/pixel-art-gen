@@ -1,4 +1,4 @@
-import * as pag from './pag/index';
+import * as pag from '../pag/index';
 import * as debug from './debug';
 import * as sss from 'sss';
 declare const require: any;
