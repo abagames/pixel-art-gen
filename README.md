@@ -42,7 +42,7 @@ class Pixel {
 }
 ```
 
-Check each value of the `Pixel` array to render the generated pixel art.
+Use the 'pag.draw' function to draw the generated pixel art.
 ```js
 // draw a generated pixels
 function drawPixels(actor) {
@@ -50,20 +50,8 @@ function drawPixels(actor) {
   if (a < 0) {
     a = Math.PI * 2 - Math.abs(a);
   }
-  var pxs = actor.pixels[Math.round(a / (Math.PI * 2 / rotationNum)) % rotationNum];
-  var pw = pxs.length;
-  var ph = pxs[0].length;
-  var sbx = Math.floor(actor.pos.x - pw / 2);
-  var sby = Math.floor(actor.pos.y - ph / 2);
-  for (var y = 0, sy = sby; y < ph; y++ , sy++) {
-    for (var x = 0, sx = sbx; x < pw; x++ , sx++) {
-      var px = pxs[x][y];
-      if (!px.isEmpty) {
-        context.fillStyle = px.style;
-        context.fillRect(sx, sy, 1, 1);
-      }
-    }
-  }
+  const ri = Math.round(a / (Math.PI * 2 / rotationNum)) % rotationNum;
+  pag.draw(context, actor.pixels, actor.pos.x, actor.pos.y, ri);
 }
 ```
 
@@ -93,14 +81,17 @@ Options described below are available.
   edgeDarkness: 0.4,   // darkness of the edge pixels
   isShowingEdge: true, // show the edge pixels
   isShowingBody: true, // show the body pixels
+  isLimitingColors: false, // limit the using colors
 ```
 
 You can set the default options of the library.
 ```js
   // set the default options
-  pag.defaultOptions.isMirrorY = true;
-  pag.defaultOptions.rotationNum = rotationNum;
-  pag.defaultOptions.scale = 2;
+  pag.setDefaultOptions({
+    isMirrorY: true,
+    rotationNum,
+    scale: 2
+  });
 ```
 
 Set the random seed by the `pag.setSeed` function to change a generated pixel art.
@@ -108,7 +99,3 @@ Set the random seed by the `pag.setSeed` function to change a generated pixel ar
   // set the random seed to change a generated pixel art
   pag.setSeed(seed);
 ```
-
-License
-----------
-MIT
