@@ -17,9 +17,7 @@ export let defaultOptions = {
 };
 let generatedPixels = {};
 let seed = 0;
-export function setSeed(_seed: number = 0) {
-  seed = _seed;
-}
+
 export function generate(patterns: string[], _options = {}) {
   (<any>_options).baseSeed = seed;
   const jso = JSON.stringify({ patterns, options: _options });
@@ -59,6 +57,16 @@ export function generate(patterns: string[], _options = {}) {
   }
   generatedPixels[jso] = result;
   return result;
+}
+
+export function setSeed(_seed: number = 0) {
+  seed = _seed;
+}
+
+export function setDefaultOptions(_defaultOptions) {
+  forOwn(_defaultOptions, (v, k) => {
+    defaultOptions[k] = v;
+  });
 }
 
 export class Pixel {
