@@ -29,5 +29,6 @@ declare module 'pag' {
     edgeDarkness?: number,
     isShowingEdge?: boolean,
     isShowingBody?: boolean,
+    isLimitingColors?: boolean
   }
 }

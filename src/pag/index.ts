@@ -14,6 +14,7 @@ export let defaultOptions = {
   edgeDarkness: 0.4,   // darkness of the edge pixels
   isShowingEdge: true, // show the edge pixels
   isShowingBody: true, // show the body pixels
+  isLimitingColors: false, // limit the using colors
 };
 let generatedPixels = {};
 let seed = 0;
@@ -76,7 +77,7 @@ export class Pixel {
   isEmpty = true;
   style: string;
 
-  setFromHsv(hue, saturation, value) {
+  setFromHsv(hue, saturation, value, isLimitingColors = false) {
     this.isEmpty = false;
     this.r = value;
     this.g = value;
@@ -110,6 +111,11 @@ export class Pixel {
         this.b *= 1 - saturation * f;
         break;
     }
+    if (isLimitingColors === true) {
+      this.r = this.limitColor(this.r);
+      this.g = this.limitColor(this.g);
+      this.b = this.limitColor(this.b);
+    }
     this.setStyle();
   }
 
@@ -118,6 +124,10 @@ export class Pixel {
     const g = Math.floor(this.g * 255);
     const b = Math.floor(this.b * 255);
     this.style = `rgb(${r},${g},${b})`;
+  }
+
+  limitColor(v) {
+    return v < 0.25 ? 0 : v < 0.75 ? 0.5 : 1;
   }
 }
 
@@ -241,7 +251,7 @@ function createColored(pixels: number[][], options) {
         v *= (1 - options.edgeDarkness);
       }
       const px = new Pixel();
-      px.setFromHsv(options.hue, options.saturation, v);
+      px.setFromHsv(options.hue, options.saturation, v, options.isLimitingColors);
       return px;
     } else {
       return new Pixel();
