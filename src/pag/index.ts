@@ -131,6 +131,24 @@ export class Pixel {
   }
 }
 
+export function draw(context: CanvasRenderingContext2D, pixels: Pixel[][][],
+  x: number, y: number, rotationIndex: number) {
+  const pxs = pixels[rotationIndex];
+  const pw = pxs.length;
+  const ph = pxs[0].length;
+  const sbx = Math.floor(x - pw / 2);
+  const sby = Math.floor(y - ph / 2);
+  for (let y = 0, sy = sby; y < ph; y++ , sy++) {
+    for (let x = 0, sx = sbx; x < pw; x++ , sx++) {
+      var px = pxs[x][y];
+      if (!px.isEmpty) {
+        context.fillStyle = px.style;
+        context.fillRect(sx, sy, 1, 1);
+      }
+    }
+  }
+}
+
 function generatePixels(patterns: string[], options, random: Random) {
   let pw = reduce(patterns, (w, p) => Math.max(w, p.length), 0);
   let ph = patterns.length;
