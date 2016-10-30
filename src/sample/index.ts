@@ -22,9 +22,11 @@ new p5(p => {
     canvas.style.width = canvas.style.height = '512px';
     context = canvas.getContext('2d');
     p.noStroke();
-    pag.defaultOptions.isMirrorY = true;
-    pag.defaultOptions.rotationNum = rotationNum;
-    pag.defaultOptions.scale = 2;
+    pag.setDefaultOptions({
+      isMirrorY: true,
+      rotationNum,
+      scale: 2
+    });
     setStars();
   };
   p.touchStarted = () => {
@@ -230,20 +232,8 @@ new p5(p => {
     if (a < 0) {
       a = Math.PI * 2 - Math.abs(a);
     }
-    const pxs = actor.pixels[Math.round(a / (Math.PI * 2 / rotationNum)) % rotationNum];
-    const pw = pxs.length;
-    const ph = pxs[0].length;
-    const sbx = Math.floor(actor.pos.x - pw / 2);
-    const sby = Math.floor(actor.pos.y - ph / 2);
-    for (let y = 0, sy = sby; y < ph; y++ , sy++) {
-      for (let x = 0, sx = sbx; x < pw; x++ , sx++) {
-        var px = pxs[x][y];
-        if (!px.isEmpty) {
-          context.fillStyle = px.style;
-          context.fillRect(sx, sy, 1, 1);
-        }
-      }
-    }
+    const ri = Math.round(a / (Math.PI * 2 / rotationNum)) % rotationNum;
+    pag.draw(context, actor.pixels, actor.pos.x, actor.pos.y, ri);
   }
   function getActors(name: string) {
     let result = [];

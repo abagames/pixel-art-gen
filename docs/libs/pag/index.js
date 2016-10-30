@@ -78,14 +78,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	    edgeDarkness: 0.4,
 	    isShowingEdge: true,
 	    isShowingBody: true,
+	    isLimitingColors: false,
 	};
 	var generatedPixels = {};
 	var seed = 0;
-	function setSeed(_seed) {
-	    if (_seed === void 0) { _seed = 0; }
-	    seed = _seed;
-	}
-	exports.setSeed = setSeed;
 	function generate(patterns, _options) {
 	    if (_options === void 0) { _options = {}; }
 	    _options.baseSeed = seed;
@@ -129,6 +125,17 @@ return /******/ (function(modules) { // webpackBootstrap
 	    return result;
 	}
 	exports.generate = generate;
+	function setSeed(_seed) {
+	    if (_seed === void 0) { _seed = 0; }
+	    seed = _seed;
+	}
+	exports.setSeed = setSeed;
+	function setDefaultOptions(_defaultOptions) {
+	    forOwn(_defaultOptions, function (v, k) {
+	        exports.defaultOptions[k] = v;
+	    });
+	}
+	exports.setDefaultOptions = setDefaultOptions;
 	var Pixel = (function () {
 	    function Pixel() {
 	        this.r = 0;
@@ -136,7 +143,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	        this.b = 0;
 	        this.isEmpty = true;
 	    }
-	    Pixel.prototype.setFromHsv = function (hue, saturation, value) {
+	    Pixel.prototype.setFromHsv = function (hue, saturation, value, isLimitingColors) {
+	        if (isLimitingColors === void 0) { isLimitingColors = false; }
 	        this.isEmpty = false;
 	        this.r = value;
 	        this.g = value;
@@ -170,6 +178,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	                this.b *= 1 - saturation * f;
 	                break;
 	        }
+	        if (isLimitingColors === true) {
+	            this.r = this.limitColor(this.r);
+	            this.g = this.limitColor(this.g);
+	            this.b = this.limitColor(this.b);
+	        }
 	        this.setStyle();
 	    };
 	    Pixel.prototype.setStyle = function () {
@@ -178,9 +191,29 @@ return /******/ (function(modules) { // webpackBootstrap
 	        var b = Math.floor(this.b * 255);
 	        this.style = "rgb(" + r + "," + g + "," + b + ")";
 	    };
+	    Pixel.prototype.limitColor = function (v) {
+	        return v < 0.25 ? 0 : v < 0.75 ? 0.5 : 1;
+	    };
 	    return Pixel;
 	}());
 	exports.Pixel = Pixel;
+	function draw(context, pixels, x, y, rotationIndex) {
+	    var pxs = pixels[rotationIndex];
+	    var pw = pxs.length;
+	    var ph = pxs[0].length;
+	    var sbx = Math.floor(x - pw / 2);
+	    var sby = Math.floor(y - ph / 2);
+	    for (var y_1 = 0, sy = sby; y_1 < ph; y_1++, sy++) {
+	        for (var x_1 = 0, sx = sbx; x_1 < pw; x_1++, sx++) {
+	            var px = pxs[x_1][y_1];
+	            if (!px.isEmpty) {
+	                context.fillStyle = px.style;
+	                context.fillRect(sx, sy, 1, 1);
+	            }
+	        }
+	    }
+	}
+	exports.draw = draw;
 	function generatePixels(patterns, options, random) {
 	    var pw = reduce(patterns, function (w, p) { return Math.max(w, p.length); }, 0);
 	    var ph = patterns.length;
@@ -295,7 +328,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                v *= (1 - options.edgeDarkness);
 	            }
 	            var px = new Pixel();
-	            px.setFromHsv(options.hue, options.saturation, v);
+	            px.setFromHsv(options.hue, options.saturation, v, options.isLimitingColors);
 	            return px;
 	        }
 	        else {

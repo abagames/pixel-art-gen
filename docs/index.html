@@ -2,17 +2,17 @@
 <html>
 
 <head>
-  <meta name="viewport" content="width=device-width, height=device-height,
+	<meta name="viewport" content="width=device-width, height=device-height,
   user-scalable=no, initial-scale=1, maximum-scale=1">
-  <title>pixel art gen</title>
-  <link rel="stylesheet" href="index.css" type="text/css" />
+	<title>pixel art gen</title>
+	<link rel="stylesheet" href="index.css" type="text/css" />
 </head>
 
 <body>
-  <script src="./libs/pag/index.js"></script>
-  <script src="./libs/sss/index.js"></script>
-  <script src="./libs/p5/p5.min.js"></script>
-  <script>
+	<script src="./libs/pag/index.js"></script>
+	<script src="./libs/sss/index.js"></script>
+	<script src="./libs/p5/p5.min.js"></script>
+	<script>
 var isInGame = false;
 var rotationNum = 16;
 var actors = [];
@@ -31,9 +31,11 @@ function setup() {
   context = canvas.getContext('2d');
   noStroke();
   // set the default options
-  pag.defaultOptions.isMirrorY = true;
-  pag.defaultOptions.rotationNum = rotationNum;
-  pag.defaultOptions.scale = 2;
+  pag.setDefaultOptions({
+    isMirrorY: true,
+    rotationNum,
+    scale: 2
+  });
   setStars();
 }
 function touchStarted() {
@@ -250,20 +252,8 @@ function drawPixels(actor) {
   if (a < 0) {
     a = Math.PI * 2 - Math.abs(a);
   }
-  var pxs = actor.pixels[Math.round(a / (Math.PI * 2 / rotationNum)) % rotationNum];
-  var pw = pxs.length;
-  var ph = pxs[0].length;
-  var sbx = Math.floor(actor.pos.x - pw / 2);
-  var sby = Math.floor(actor.pos.y - ph / 2);
-  for (var y = 0, sy = sby; y < ph; y++ , sy++) {
-    for (var x = 0, sx = sbx; x < pw; x++ , sx++) {
-      var px = pxs[x][y];
-      if (!px.isEmpty) {
-        context.fillStyle = px.style;
-        context.fillRect(sx, sy, 1, 1);
-      }
-    }
-  }
+  const ri = Math.round(a / (Math.PI * 2 / rotationNum)) % rotationNum;
+  pag.draw(context, actor.pixels, actor.pos.x, actor.pos.y, ri); 
 }
 function getActors(name) {
   var result = [];
@@ -318,11 +308,11 @@ function enableShowingErrors() {
   });
 }
   </script>
-  <!--
-  <script src='./libs/sample/index.js'></script>
-  <script src="http://localhost:35729/livereload.js"></script>
+	<!--
+	<script src='./libs/sample/index.js'></script>
+	<script src="http://localhost:35729/livereload.js"></script>
   -->
-  <p>[Click/Touch]: shot</p>
+	<p>[Click/Touch]: shot</p>
 </body>
 
 </html>
