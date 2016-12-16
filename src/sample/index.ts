@@ -93,7 +93,7 @@ new p5(p => {
       if (isTouched) {
         isTouched = false;
         const shot: any = {};
-        shot.pixels = pag.generate([
+        shot.images = pag.generateImages([
           'xxx'
         ], { isMirrorY: false });
         shot.pos = { x: this.pos.x, y: this.pos.y };
@@ -233,7 +233,7 @@ new p5(p => {
       a = Math.PI * 2 - Math.abs(a);
     }
     const ri = Math.round(a / (Math.PI * 2 / rotationNum)) % rotationNum;
-    pag.drawImage(context.actor.images, actor.pos.x, actor.pos.y, ri);
+    pag.drawImage(context, actor.images, actor.pos.x, actor.pos.y, ri);
   }
   function getActors(name: string) {
     let result = [];

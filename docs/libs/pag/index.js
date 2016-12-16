@@ -135,7 +135,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    canvas.height = height;
 	    var context = canvas.getContext('2d');
 	    var images = [];
-	    for (var i = 0; i < patterns.length; i++) {
+	    for (var i = 0; i < pixels.length; i++) {
 	        context.clearRect(0, 0, width, height);
 	        draw(context, pixels, width / 2, height / 2, i);
 	        var image = new Image();

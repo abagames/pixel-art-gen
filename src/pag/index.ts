@@ -69,7 +69,7 @@ export function generateImages(patterns: string[], _options = {}) {
   canvas.height = height;
   const context = canvas.getContext('2d');
   let images = [];
-  for (let i = 0; i < patterns.length; i++) {
+  for (let i = 0; i < pixels.length; i++) {
     context.clearRect(0, 0, width, height);
     draw(context, pixels, width / 2, height / 2, i);
     const image = new Image();

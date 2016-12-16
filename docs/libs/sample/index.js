@@ -137,7 +137,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    canvas.height = height;
 	    var context = canvas.getContext('2d');
 	    var images = [];
-	    for (var i = 0; i < patterns.length; i++) {
+	    for (var i = 0; i < pixels.length; i++) {
 	        context.clearRect(0, 0, width, height);
 	        draw(context, pixels, width / 2, height / 2, i);
 	        var image = new Image();
@@ -585,7 +585,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            if (isTouched) {
 	                isTouched = false;
 	                var shot = {};
-	                shot.pixels = pag.generate([
+	                shot.images = pag.generateImages([
 	                    'xxx'
 	                ], { isMirrorY: false });
 	                shot.pos = { x: this.pos.x, y: this.pos.y };
@@ -729,7 +729,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            a = Math.PI * 2 - Math.abs(a);
 	        }
 	        var ri = Math.round(a / (Math.PI * 2 / rotationNum)) % rotationNum;
-	        pag.drawImage(context.actor.images, actor.pos.x, actor.pos.y, ri);
+	        pag.drawImage(context, actor.images, actor.pos.x, actor.pos.y, ri);
 	    }
 	    function getActors(name) {
 	        var result = [];
