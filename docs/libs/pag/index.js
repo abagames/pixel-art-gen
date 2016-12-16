@@ -125,6 +125,26 @@ return /******/ (function(modules) { // webpackBootstrap
 	    return result;
 	}
 	exports.generate = generate;
+	function generateImages(patterns, _options) {
+	    if (_options === void 0) { _options = {}; }
+	    var pixels = generate(patterns, _options);
+	    var width = pixels[0].length;
+	    var height = pixels[0][0].length;
+	    var canvas = document.createElement('canvas');
+	    canvas.width = width;
+	    canvas.height = height;
+	    var context = canvas.getContext('2d');
+	    var images = [];
+	    for (var i = 0; i < patterns.length; i++) {
+	        context.clearRect(0, 0, width, height);
+	        draw(context, pixels, width / 2, height / 2, i);
+	        var image = new Image();
+	        image.src = canvas.toDataURL();
+	        images.push(image);
+	    }
+	    return images;
+	}
+	exports.generateImages = generateImages;
 	function setSeed(_seed) {
 	    if (_seed === void 0) { _seed = 0; }
 	    seed = _seed;
@@ -198,6 +218,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	}());
 	exports.Pixel = Pixel;
 	function draw(context, pixels, x, y, rotationIndex) {
+	    if (rotationIndex === void 0) { rotationIndex = 0; }
 	    var pxs = pixels[rotationIndex];
 	    var pw = pxs.length;
 	    var ph = pxs[0].length;
@@ -214,6 +235,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	    }
 	}
 	exports.draw = draw;
+	function drawImage(context, images, x, y, rotationIndex) {
+	    if (rotationIndex === void 0) { rotationIndex = 0; }
+	    var img = images[rotationIndex];
+	    context.drawImage(img, Math.floor(x - img.width / 2), Math.floor(y - img.height / 2));
+	}
+	exports.drawImage = drawImage;
 	function generatePixels(patterns, options, random) {
 	    var pw = reduce(patterns, function (w, p) { return Math.max(w, p.length); }, 0);
 	    var ph = patterns.length;

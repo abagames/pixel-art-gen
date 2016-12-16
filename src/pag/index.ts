@@ -60,6 +60,25 @@ export function generate(patterns: string[], _options = {}) {
   return result;
 }
 
+export function generateImages(patterns: string[], _options = {}) {
+  const pixels = generate(patterns, _options);
+  const width = pixels[0].length;
+  const height = pixels[0][0].length;
+  const canvas = document.createElement('canvas');
+  canvas.width = width;
+  canvas.height = height;
+  const context = canvas.getContext('2d');
+  let images = [];
+  for (let i = 0; i < patterns.length; i++) {
+    context.clearRect(0, 0, width, height);
+    draw(context, pixels, width / 2, height / 2, i);
+    const image = new Image();
+    image.src = canvas.toDataURL();
+    images.push(image);
+  }
+  return images;
+}
+
 export function setSeed(_seed: number = 0) {
   seed = _seed;
 }
@@ -132,7 +151,7 @@ export class Pixel {
 }
 
 export function draw(context: CanvasRenderingContext2D, pixels: Pixel[][][],
-  x: number, y: number, rotationIndex: number) {
+  x: number, y: number, rotationIndex: number = 0) {
   const pxs = pixels[rotationIndex];
   const pw = pxs.length;
   const ph = pxs[0].length;
@@ -147,6 +166,12 @@ export function draw(context: CanvasRenderingContext2D, pixels: Pixel[][][],
       }
     }
   }
+}
+
+export function drawImage(context: CanvasRenderingContext2D, images: HTMLImageElement[],
+  x: number, y: number, rotationIndex: number = 0) {
+  const img = images[rotationIndex];
+  context.drawImage(img, Math.floor(x - img.width / 2), Math.floor(y - img.height / 2));
 }
 
 function generatePixels(patterns: string[], options, random: Random) {

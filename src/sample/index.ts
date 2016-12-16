@@ -81,7 +81,7 @@ new p5(p => {
       player.isAlive = false;
     }
     player = {};
-    player.pixels = pag.generate([
+    player.images = pag.generateImages([
       ' x',
       'xxxx'
     ]);
@@ -136,7 +136,7 @@ new p5(p => {
   };
   const setEnemy = () => {
     const enemy: any = {};
-    enemy.pixels = pag.generate([
+    enemy.images = pag.generateImages([
       ' x',
       'xx',
     ], { isMirrorX: true });
@@ -177,7 +177,7 @@ new p5(p => {
   const setParticles = (num, pos, angle = null) => {
     for (var i = 0; i < num; i++) {
       const part: any = {};
-      part.pixels = pag.generate([
+      part.images = pag.generateImages([
         'x',
       ], { isMirrorX: true, colorLighting: 0.5, edgeDarkness: 0.8, value: 0.8 });
       part.pos = { x: pos.x, y: pos.y };
@@ -203,7 +203,7 @@ new p5(p => {
   const setStars = () => {
     for (let i = 0; i < 32; i++) {
       const star: any = {};
-      star.pixels = pag.generate([
+      star.images = pag.generateImages([
         'o'
       ], { isMirrorY: false, hue: p.random(), saturation: 0.4 });
       star.pos = { x: p.random(-16, 132), y: p.random(-16, 132) };
@@ -233,7 +233,7 @@ new p5(p => {
       a = Math.PI * 2 - Math.abs(a);
     }
     const ri = Math.round(a / (Math.PI * 2 / rotationNum)) % rotationNum;
-    pag.draw(context, actor.pixels, actor.pos.x, actor.pos.y, ri);
+    pag.drawImage(context.actor.images, actor.pos.x, actor.pos.y, ri);
   }
   function getActors(name: string) {
     let result = [];

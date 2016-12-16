@@ -127,6 +127,26 @@ return /******/ (function(modules) { // webpackBootstrap
 	    return result;
 	}
 	exports.generate = generate;
+	function generateImages(patterns, _options) {
+	    if (_options === void 0) { _options = {}; }
+	    var pixels = generate(patterns, _options);
+	    var width = pixels[0].length;
+	    var height = pixels[0][0].length;
+	    var canvas = document.createElement('canvas');
+	    canvas.width = width;
+	    canvas.height = height;
+	    var context = canvas.getContext('2d');
+	    var images = [];
+	    for (var i = 0; i < patterns.length; i++) {
+	        context.clearRect(0, 0, width, height);
+	        draw(context, pixels, width / 2, height / 2, i);
+	        var image = new Image();
+	        image.src = canvas.toDataURL();
+	        images.push(image);
+	    }
+	    return images;
+	}
+	exports.generateImages = generateImages;
 	function setSeed(_seed) {
 	    if (_seed === void 0) { _seed = 0; }
 	    seed = _seed;
@@ -200,6 +220,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	}());
 	exports.Pixel = Pixel;
 	function draw(context, pixels, x, y, rotationIndex) {
+	    if (rotationIndex === void 0) { rotationIndex = 0; }
 	    var pxs = pixels[rotationIndex];
 	    var pw = pxs.length;
 	    var ph = pxs[0].length;
@@ -216,6 +237,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	    }
 	}
 	exports.draw = draw;
+	function drawImage(context, images, x, y, rotationIndex) {
+	    if (rotationIndex === void 0) { rotationIndex = 0; }
+	    var img = images[rotationIndex];
+	    context.drawImage(img, Math.floor(x - img.width / 2), Math.floor(y - img.height / 2));
+	}
+	exports.drawImage = drawImage;
 	function generatePixels(patterns, options, random) {
 	    var pw = reduce(patterns, function (w, p) { return Math.max(w, p.length); }, 0);
 	    var ph = patterns.length;
@@ -546,7 +573,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            player.isAlive = false;
 	        }
 	        player = {};
-	        player.pixels = pag.generate([
+	        player.images = pag.generateImages([
 	            ' x',
 	            'xxxx'
 	        ]);
@@ -602,7 +629,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    };
 	    var setEnemy = function () {
 	        var enemy = {};
-	        enemy.pixels = pag.generate([
+	        enemy.images = pag.generateImages([
 	            ' x',
 	            'xx',
 	        ], { isMirrorX: true });
@@ -645,7 +672,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        if (angle === void 0) { angle = null; }
 	        for (var i = 0; i < num; i++) {
 	            var part = {};
-	            part.pixels = pag.generate([
+	            part.images = pag.generateImages([
 	                'x',
 	            ], { isMirrorX: true, colorLighting: 0.5, edgeDarkness: 0.8, value: 0.8 });
 	            part.pos = { x: pos.x, y: pos.y };
@@ -672,7 +699,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    var setStars = function () {
 	        for (var i = 0; i < 32; i++) {
 	            var star = {};
-	            star.pixels = pag.generate([
+	            star.images = pag.generateImages([
 	                'o'
 	            ], { isMirrorY: false, hue: p.random(), saturation: 0.4 });
 	            star.pos = { x: p.random(-16, 132), y: p.random(-16, 132) };
@@ -702,7 +729,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            a = Math.PI * 2 - Math.abs(a);
 	        }
 	        var ri = Math.round(a / (Math.PI * 2 / rotationNum)) % rotationNum;
-	        pag.draw(context, actor.pixels, actor.pos.x, actor.pos.y, ri);
+	        pag.drawImage(context.actor.images, actor.pos.x, actor.pos.y, ri);
 	    }
 	    function getActors(name) {
 	        var result = [];
