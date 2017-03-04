@@ -248,8 +248,9 @@ function createRotated(pixels: number[][], rotationNum: number) {
   const ph = pixels[0].length;
   const pcx = pw / 2;
   const pcy = ph / 2;
-  const w = Math.round(pw * 1.5 / 2) * 2;
-  const h = Math.round(ph * 1.5 / 2) * 2;
+  const s = Math.max(pw, ph);
+  const w = Math.round(s * 1.5 / 2) * 2;
+  const h = Math.round(s * 1.5 / 2) * 2;
   const cx = w / 2;
   const cy = h / 2;
   let offset = { x: 0, y: 0 };
@@ -276,6 +277,20 @@ function rotateVector(v, angle) {
 function createColored(pixels: number[][], options) {
   const w = pixels.length;
   const h = pixels[0].length;
+  let oh = 0;
+  let hasPixel = false;
+  for (let y = 0; y < h / 2; y++) {
+    for (let x = 0; x < w; x++) {
+      if (pixels[x][y] !== 0 || pixels[x][h - 1 - y] !== 0) {
+        hasPixel = true;
+        break;
+      }
+    }
+    if (hasPixel) {
+      break;
+    }
+    oh++;
+  }
   const random = new Random();
   random.setSeed(options.seed);
   return timesMap(w, x => timesMap(h, y => {
@@ -285,7 +300,7 @@ function createColored(pixels: number[][], options) {
       return new Pixel();
     }
     if (p !== 0) {
-      var l = Math.sin(y / h * Math.PI) * options.colorLighting +
+      var l = Math.sin((y - oh) / h * Math.PI) * options.colorLighting +
         (1 - options.colorLighting);
       let v = (l * (1 - options.colorNoise) +
         random.get01() * options.colorNoise) * options.value;

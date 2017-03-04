@@ -313,8 +313,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	    var ph = pixels[0].length;
 	    var pcx = pw / 2;
 	    var pcy = ph / 2;
-	    var w = Math.round(pw * 1.5 / 2) * 2;
-	    var h = Math.round(ph * 1.5 / 2) * 2;
+	    var s = Math.max(pw, ph);
+	    var w = Math.round(s * 1.5 / 2) * 2;
+	    var h = Math.round(s * 1.5 / 2) * 2;
 	    var cx = w / 2;
 	    var cy = h / 2;
 	    var offset = { x: 0, y: 0 };
@@ -339,6 +340,20 @@ return /******/ (function(modules) { // webpackBootstrap
 	function createColored(pixels, options) {
 	    var w = pixels.length;
 	    var h = pixels[0].length;
+	    var oh = 0;
+	    var hasPixel = false;
+	    for (var y = 0; y < h / 2; y++) {
+	        for (var x = 0; x < w; x++) {
+	            if (pixels[x][y] !== 0 || pixels[x][h - 1 - y] !== 0) {
+	                hasPixel = true;
+	                break;
+	            }
+	        }
+	        if (hasPixel) {
+	            break;
+	        }
+	        oh++;
+	    }
 	    var random = new Random();
 	    random.setSeed(options.seed);
 	    return timesMap(w, function (x) { return timesMap(h, function (y) {
@@ -348,7 +363,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            return new Pixel();
 	        }
 	        if (p !== 0) {
-	            var l = Math.sin(y / h * Math.PI) * options.colorLighting +
+	            var l = Math.sin((y - oh) / h * Math.PI) * options.colorLighting +
 	                (1 - options.colorLighting);
 	            var v = (l * (1 - options.colorNoise) +
 	                random.get01() * options.colorNoise) * options.value;
