@@ -277,7 +277,7 @@ function rotateVector(v, angle) {
 function createColored(pixels: number[][], options) {
   const w = pixels.length;
   const h = pixels[0].length;
-  let oh = 0;
+  let lightingStartY = 0;
   let hasPixel = false;
   for (let y = 0; y < h / 2; y++) {
     for (let x = 0; x < w; x++) {
@@ -289,7 +289,11 @@ function createColored(pixels: number[][], options) {
     if (hasPixel) {
       break;
     }
-    oh++;
+    lightingStartY++;
+  }
+  let lightingHeight = h - lightingStartY * 2;
+  if (lightingHeight <= 0) {
+    lightingHeight = 1;
   }
   const random = new Random();
   random.setSeed(options.seed);
@@ -300,8 +304,8 @@ function createColored(pixels: number[][], options) {
       return new Pixel();
     }
     if (p !== 0) {
-      var l = Math.sin((y - oh) / h * Math.PI) * options.colorLighting +
-        (1 - options.colorLighting);
+      var l = Math.sin((y - lightingStartY) / lightingHeight * Math.PI) *
+        options.colorLighting + (1 - options.colorLighting);
       let v = (l * (1 - options.colorNoise) +
         random.get01() * options.colorNoise) * options.value;
       v = v >= 0 ? (v <= 1 ? v : 1) : 0;

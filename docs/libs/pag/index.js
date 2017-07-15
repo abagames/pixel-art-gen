@@ -338,7 +338,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	function createColored(pixels, options) {
 	    var w = pixels.length;
 	    var h = pixels[0].length;
-	    var oh = 0;
+	    var lightingStartY = 0;
 	    var hasPixel = false;
 	    for (var y = 0; y < h / 2; y++) {
 	        for (var x = 0; x < w; x++) {
@@ -350,7 +350,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	        if (hasPixel) {
 	            break;
 	        }
-	        oh++;
+	        lightingStartY++;
+	    }
+	    var lightingHeight = h - lightingStartY * 2;
+	    if (lightingHeight <= 0) {
+	        lightingHeight = 1;
 	    }
 	    var random = new Random();
 	    random.setSeed(options.seed);
@@ -361,8 +365,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	            return new Pixel();
 	        }
 	        if (p !== 0) {
-	            var l = Math.sin((y - oh) / h * Math.PI) * options.colorLighting +
-	                (1 - options.colorLighting);
+	            var l = Math.sin((y - lightingStartY) / lightingHeight * Math.PI) *
+	                options.colorLighting + (1 - options.colorLighting);
 	            var v = (l * (1 - options.colorNoise) +
 	                random.get01() * options.colorNoise) * options.value;
 	            v = v >= 0 ? (v <= 1 ? v : 1) : 0;
