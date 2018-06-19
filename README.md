@@ -1,37 +1,30 @@
-pixel-art-gen
-======================
+# pixel-art-gen ([Demo](https://abagames.github.io/pixel-art-gen/samples/index.html?shot))
+
 Generate a pixel art from a simple pattern string.
 (based on [pixel-sprite-generator](https://github.com/zfedoran/pixel-sprite-generator))
 
-Play [the demo](https://abagames.github.io/pixel-art-gen/) of the sample code.
-
 ### How to use
 
-See the [sample code](https://github.com/abagames/pixel-art-gen/blob/master/docs/index.html).
-([p5.js](https://p5js.org/) is used for drawing.)
+See the [sample code](https://github.com/abagames/pixel-art-gen/blob/master/src/samples/shot.ts).
 
-Include pag/index.js script.
-```html
-  <script src="./libs/pag/index.js"></script>
-```
+Include [pixel-art-gen/index.js](https://github.com/abagames/pixel-art-gen/blob/master/docs/pixel-art-gen/index.js) script.
 
 `pag.generate` function returns a generated pixel art in a 3d `Pixel` array.
 ([rotated pattern index][x][y])
+
 ```js
-  // generate a pixel art
-  // (with the default options {isMirrorY: true, rotationNum: 16, scale: 2})
-  // each character in the string array of the 1st arg represents a pixel type
-  // 'x': a body or an edge
-  // '-': a body or an empty
-  // 'o': an edge
-  // '*': a body
-  player.pixels = pag.generate([
-    ' x',
-    'xxxx'
-  ]);
+// generate a pixel art
+// (with the default options {isMirrorY: true, rotationNum: 16, scale: 2})
+// each character in the string array of the 1st arg represents a pixel type
+// 'x': a body or an edge
+// '-': a body or an empty
+// 'o': an edge
+// '*': a body
+player.pixels = pag.generate([" x", "xxxx"]);
 ```
 
 `Pixel` instance consists of rgb colors, an isEmpty boolean value and a style string.
+
 ```js
 class Pixel {
   r = 0;
@@ -43,6 +36,7 @@ class Pixel {
 ```
 
 Use the 'pag.draw' function to draw the generated pixel art.
+
 ```js
 // draw a generated pixels
 function drawPixels(actor) {
@@ -50,21 +44,20 @@ function drawPixels(actor) {
   if (a < 0) {
     a = Math.PI * 2 - Math.abs(a);
   }
-  const ri = Math.round(a / (Math.PI * 2 / rotationNum)) % rotationNum;
+  const ri = Math.round(a / ((Math.PI * 2) / rotationNum)) % rotationNum;
   pag.draw(context, actor.pixels, actor.pos.x, actor.pos.y, ri);
 }
 ```
 
 Options can be specified in the 2nd arg of the `pag.generate` function.
+
 ```js
-  // specify the options in the 2nd arg
-  enemy.pixels = pag.generate([
-    ' x',
-    'xx',
-  ], { isMirrorX: true });
+// specify the options in the 2nd arg
+enemy.pixels = pag.generate([" x", "xx"], { isMirrorX: true });
 ```
 
 Options described below are available.
+
 ```js
   isMirrorX: false,    // mirror the pattern in the x-axis
   isMirrorY: false,    // mirror the pattern in the y-axis
@@ -85,17 +78,19 @@ Options described below are available.
 ```
 
 You can set the default options of the library.
+
 ```js
-  // set the default options
-  pag.setDefaultOptions({
-    isMirrorY: true,
-    rotationNum,
-    scale: 2
-  });
+// set the default options
+pag.setDefaultOptions({
+  isMirrorY: true,
+  rotationNum,
+  scale: 2
+});
 ```
 
 Set the random seed by the `pag.setSeed` function to change a generated pixel art.
+
 ```js
-  // set the random seed to change a generated pixel art
-  pag.setSeed(seed);
+// set the random seed to change a generated pixel art
+pag.setSeed(seed);
 ```

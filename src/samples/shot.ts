@@ -1,8 +1,8 @@
-import * as pag from '../pag/index';
-import * as debug from './debug';
-import * as sss from 'sss';
+import * as pag from "../index";
+import * as debug from "./debug";
+import * as sss from "sss";
 declare const require: any;
-const p5 = require('p5');
+const p5 = require("p5");
 
 new p5(p => {
   let isInGame = false;
@@ -16,11 +16,11 @@ new p5(p => {
   let context;
   p.setup = () => {
     sss.init(10);
-    debug.enableShowingErrors()
+    debug.enableShowingErrors();
     debug.initSeedUi(onSeedChanged);
     const canvas = p.createCanvas(128, 128).canvas;
-    canvas.style.width = canvas.style.height = '512px';
-    context = canvas.getContext('2d');
+    canvas.style.width = canvas.style.height = "512px";
+    context = canvas.getContext("2d");
     p.noStroke();
     pag.setDefaultOptions({
       isMirrorY: true,
@@ -57,20 +57,20 @@ new p5(p => {
       a.pos.y += a.vel.y;
       if (a.pos.x < -48 || a.pos.x > 176 || a.pos.y < -48 || a.pos.y > 176) {
         a.isAlive = false;
-        if (a.name === 'shot') {
+        if (a.name === "shot") {
           addingScore = 1;
         }
       }
       drawPixels(a);
     });
-    for (let i = 0; i < actors.length;) {
+    for (let i = 0; i < actors.length; ) {
       if (actors[i].isAlive === false) {
         actors.splice(i, 1);
       } else {
         i++;
       }
     }
-    p.fill('#ace');
+    p.fill("#ace");
     p.textSize(9);
     p.text(score, 5, 10);
     p.text(`+${addingScore}`, 5, 20);
@@ -81,44 +81,45 @@ new p5(p => {
       player.isAlive = false;
     }
     player = {};
-    player.images = pag.generateImages([
-      ' x',
-      'xxxx'
-    ]);
+    player.images = pag.generateImages([" x", "xxxx"]);
     player.pos = { x: 64, y: 64 };
     player.vel = { x: 0, y: 0 };
     player.angle = 0;
-    player.update = function () {
-      this.angle = Math.atan2(p.mouseY / 4 - this.pos.y, p.mouseX / 4 - this.pos.x);
+    player.update = function() {
+      this.angle = Math.atan2(
+        p.mouseY / 4 - this.pos.y,
+        p.mouseX / 4 - this.pos.x
+      );
       if (isTouched) {
         isTouched = false;
         const shot: any = {};
-        shot.images = pag.generateImages([
-          'xxx'
-        ], { isMirrorY: false });
+        shot.images = pag.generateImages(["xxx"], { isMirrorY: false });
         shot.pos = { x: this.pos.x, y: this.pos.y };
         shot.angle = this.angle;
         const speed = 3;
-        shot.vel = { x: Math.cos(this.angle) * speed, y: Math.sin(this.angle) * speed };
-        shot.update = function () {
-          forEach(getActors('enemy'), e => {
+        shot.vel = {
+          x: Math.cos(this.angle) * speed,
+          y: Math.sin(this.angle) * speed
+        };
+        shot.update = function() {
+          forEach(getActors("enemy"), e => {
             let ox = e.pos.x - this.pos.x;
             let oy = e.pos.y - this.pos.y;
             if (Math.sqrt(ox * ox + oy * oy) < 10) {
               this.isAlive = false;
               e.isAlive = false;
               setParticles(5, e.pos);
-              sss.play('h1', 4);
+              sss.play("h1", 4);
               score += addingScore;
               addingScore++;
             }
           });
         };
-        shot.name = 'shot';
+        shot.name = "shot";
         shot.priority = -1;
         actors.push(shot);
         setParticles(2, this.pos, this.angle);
-        sss.play('s1');
+        sss.play("s1");
         this.vel.x = -shot.vel.x;
         this.vel.y = -shot.vel.y;
       }
@@ -136,10 +137,7 @@ new p5(p => {
   };
   const setEnemy = () => {
     const enemy: any = {};
-    enemy.images = pag.generateImages([
-      ' x',
-      'xx',
-    ], { isMirrorX: true });
+    enemy.images = pag.generateImages([" x", "xx"], { isMirrorX: true });
     enemy.pos = { x: p.random(-32, 160), y: p.random() < 0.5 ? -32 : 160 };
     if (p.random() < 0.5) {
       let tx = enemy.pos.x;
@@ -148,7 +146,7 @@ new p5(p => {
     }
     enemy.vel = { x: p.random(-0.1, 0.1), y: p.random(-0.1, 0.1) };
     enemy.angle = 0;
-    enemy.update = function () {
+    enemy.update = function() {
       if (player != null) {
         const df = Math.sqrt(ticks / 1000 + 1);
         this.vel.x += (player.pos.x - this.pos.x) * 0.0001 * df;
@@ -158,7 +156,7 @@ new p5(p => {
         if (Math.sqrt(ox * ox + oy * oy) < 10) {
           isInGame = false;
           setParticles(30, player.pos);
-          sss.play('u1', 5);
+          sss.play("u1", 5);
           sss.stopBgm();
           player.isAlive = false;
           player = null;
@@ -170,16 +168,19 @@ new p5(p => {
       this.vel.x *= 0.99;
       this.vel.y *= 0.99;
     };
-    enemy.name = 'enemy';
+    enemy.name = "enemy";
     enemy.priority = 1;
     actors.push(enemy);
   };
   const setParticles = (num, pos, angle = null) => {
     for (var i = 0; i < num; i++) {
       const part: any = {};
-      part.images = pag.generateImages([
-        'x',
-      ], { isMirrorX: true, colorLighting: 0.5, edgeDarkness: 0.8, value: 0.8 });
+      part.images = pag.generateImages(["x"], {
+        isMirrorX: true,
+        colorLighting: 0.5,
+        edgeDarkness: 0.8,
+        value: 0.8
+      });
       part.pos = { x: pos.x, y: pos.y };
       if (angle == null) {
         part.angle = p.random(Math.PI * 2);
@@ -187,15 +188,18 @@ new p5(p => {
         part.angle = angle + p.random(-0.5, 0.5);
       }
       const speed = p.random(0.5, 1);
-      part.vel = { x: Math.cos(part.angle) * speed, y: Math.sin(part.angle) * speed };
+      part.vel = {
+        x: Math.cos(part.angle) * speed,
+        y: Math.sin(part.angle) * speed
+      };
       part.ticks = p.random(15, 30);
-      part.update = function () {
+      part.update = function() {
         this.vel.x *= 0.98;
         this.vel.y *= 0.98;
         if (this.ticks-- < 0) {
           this.isAlive = false;
         }
-      }
+      };
       part.priority = -2;
       actors.push(part);
     }
@@ -203,13 +207,15 @@ new p5(p => {
   const setStars = () => {
     for (let i = 0; i < 32; i++) {
       const star: any = {};
-      star.images = pag.generateImages([
-        'o'
-      ], { isMirrorY: false, hue: p.random(), saturation: 0.4 });
+      star.images = pag.generateImages(["o"], {
+        isMirrorY: false,
+        hue: p.random(),
+        saturation: 0.4
+      });
       star.pos = { x: p.random(-16, 132), y: p.random(-16, 132) };
       star.vel = { x: 0, y: 0 };
       star.angle = 0;
-      star.update = function () {
+      star.update = function() {
         if (this.pos.x < -16) {
           this.pos.x = 160 + this.pos.x;
         }
@@ -232,7 +238,7 @@ new p5(p => {
     if (a < 0) {
       a = Math.PI * 2 - Math.abs(a);
     }
-    const ri = Math.round(a / (Math.PI * 2 / rotationNum)) % rotationNum;
+    const ri = Math.round(a / ((Math.PI * 2) / rotationNum)) % rotationNum;
     pag.drawImage(context, actor.images, actor.pos.x, actor.pos.y, ri);
   }
   function getActors(name: string) {
@@ -257,5 +263,5 @@ new p5(p => {
       sss.playBgm();
       setPlayer();
     }
-  }
+  };
 });
