@@ -15,7 +15,9 @@ new p5(p => {
   let isTouched = false;
   let context;
   p.setup = () => {
-    sss.init();
+    const seed = 9682886;
+    pag.setSeed(seed);
+    sss.init(seed);
     debug.enableShowingErrors();
     debug.initSeedUi(onSeedChanged);
     const canvas = p.createCanvas(128, 128).canvas;
@@ -35,7 +37,7 @@ new p5(p => {
       isInGame = true;
       score = ticks = 0;
       addingScore = 1;
-      sss.playBgm();
+      sss.playJingle("s1");
       setPlayer();
     }
     isTouched = true;
@@ -45,6 +47,9 @@ new p5(p => {
   };
   p.draw = () => {
     sss.update();
+    if (isInGame && ticks === 180) {
+      sss.playBgm();
+    }
     p.background(0);
     const df = Math.sqrt(ticks / 1000 + 1);
     if (p.random() < 0.03 * df) {
@@ -109,7 +114,7 @@ new p5(p => {
               this.isAlive = false;
               e.isAlive = false;
               setParticles(5, e.pos);
-              sss.play("h1", 4);
+              sss.playJingle("l2", true, 69, 12);
               score += addingScore;
               addingScore++;
             }
@@ -156,7 +161,7 @@ new p5(p => {
         if (Math.sqrt(ox * ox + oy * oy) < 10) {
           isInGame = false;
           setParticles(30, player.pos);
-          sss.play("u1", 5);
+          sss.playJingle("s3", true, 60, 24);
           sss.stopBgm();
           player.isAlive = false;
           player = null;
