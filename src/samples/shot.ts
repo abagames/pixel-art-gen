@@ -1,6 +1,6 @@
 import * as pag from "../index";
 import * as debug from "./debug";
-import * as sss from "sss";
+import * as sss from "sounds-some-sounds";
 declare const require: any;
 const p5 = require("p5");
 
@@ -15,7 +15,7 @@ new p5(p => {
   let isTouched = false;
   let context;
   p.setup = () => {
-    sss.init(10);
+    sss.init();
     debug.enableShowingErrors();
     debug.initSeedUi(onSeedChanged);
     const canvas = p.createCanvas(128, 128).canvas;
