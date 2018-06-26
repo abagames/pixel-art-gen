@@ -27,7 +27,7 @@ new p5(p => {
     pag.setDefaultOptions({
       isMirrorY: true,
       rotationNum,
-      scale: 2
+      scalePattern: 2
     });
     setStars();
   };

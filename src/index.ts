@@ -1,31 +1,33 @@
-export let defaultOptions = {
-  isMirrorX: false,    // mirror the pattern in the x-axis
-  isMirrorY: false,    // mirror the pattern in the y-axis
-  seed: 0,             // random seed
-  hue: null,           // base color (hue changes randomly when hue = null)
+import { PagOptions } from "pixel-art-gen";
+
+export let defaultOptions: PagOptions = {
+  isMirrorX: false, // mirror the pattern in the x-axis
+  isMirrorY: false, // mirror the pattern in the y-axis
+  seed: 0, // random seed
+  hue: null, // base color (hue changes randomly when hue = null)
   saturation: 0.8,
   value: 1,
-  rotationNum: 1,      // create rotated patterns
-  scale: 1,            // scaling
-  scaleX: null,
-  scaleY: null,
-  colorNoise: 0.1,     // how often the color changes randomly
-  colorLighting: 1,    // lighting effect for the color
-  edgeDarkness: 0.4,   // darkness of the edge pixels
+  rotationNum: 1, // create rotated patterns
+  scalePattern: 1, // scale the pattern
+  scalePatternX: null,
+  scalePatternY: null,
+  colorNoise: 0.1, // how often the color changes randomly
+  colorLighting: 1, // lighting effect for the color
+  edgeDarkness: 0.4, // darkness of the edge pixels
   isShowingEdge: true, // show the edge pixels
   isShowingBody: true, // show the body pixels
-  isLimitingColors: false, // limit the using colors
+  isLimitingColors: false // limit the using colors
 };
 let generatedPixels = {};
 let seed = 0;
 
-export function generate(patterns: string[], _options = {}) {
+export function generate(patterns: string[], _options: PagOptions = {}) {
   (<any>_options).baseSeed = seed;
   const jso = JSON.stringify({ patterns, options: _options });
   if (generatedPixels[jso]) {
     return generatedPixels[jso];
   }
-  let options: any = {};
+  let options: PagOptions = {};
   forOwn(defaultOptions, (v, k) => {
     options[k] = v;
   });
@@ -41,11 +43,11 @@ export function generate(patterns: string[], _options = {}) {
   if (options.hue == null) {
     options.hue = random.get01();
   }
-  if (options.scaleX == null) {
-    options.scaleX = options.scale;
+  if (options.scalePatternX == null) {
+    options.scalePatternX = options.scalePattern;
   }
-  if (options.scaleY == null) {
-    options.scaleY = options.scale;
+  if (options.scalePatternY == null) {
+    options.scalePatternY = options.scalePattern;
   }
   let pixels = generatePixels(patterns, options, random);
   let result;
@@ -64,10 +66,10 @@ export function generateImages(patterns: string[], _options = {}) {
   const pixels = generate(patterns, _options);
   const width = pixels[0].length;
   const height = pixels[0][0].length;
-  const canvas = document.createElement('canvas');
+  const canvas = document.createElement("canvas");
   canvas.width = width;
   canvas.height = height;
-  const context = canvas.getContext('2d');
+  const context = canvas.getContext("2d");
   let images = [];
   for (let i = 0; i < pixels.length; i++) {
     context.clearRect(0, 0, width, height);
@@ -150,15 +152,20 @@ export class Pixel {
   }
 }
 
-export function draw(context: CanvasRenderingContext2D, pixels: Pixel[][][],
-  x: number, y: number, rotationIndex: number = 0) {
+export function draw(
+  context: CanvasRenderingContext2D,
+  pixels: Pixel[][][],
+  x: number,
+  y: number,
+  rotationIndex: number = 0
+) {
   const pxs = pixels[rotationIndex];
   const pw = pxs.length;
   const ph = pxs[0].length;
   const sbx = Math.floor(x - pw / 2);
   const sby = Math.floor(y - ph / 2);
-  for (let y = 0, sy = sby; y < ph; y++ , sy++) {
-    for (let x = 0, sx = sbx; x < pw; x++ , sx++) {
+  for (let y = 0, sy = sby; y < ph; y++, sy++) {
+    for (let x = 0, sx = sbx; x < pw; x++, sx++) {
       var px = pxs[x][y];
       if (!px.isEmpty) {
         context.fillStyle = px.style;
@@ -168,21 +175,38 @@ export function draw(context: CanvasRenderingContext2D, pixels: Pixel[][][],
   }
 }
 
-export function drawImage(context: CanvasRenderingContext2D, images: HTMLImageElement[],
-  x: number, y: number, rotationIndex: number = 0) {
+export function drawImage(
+  context: CanvasRenderingContext2D,
+  images: HTMLImageElement[],
+  x: number,
+  y: number,
+  rotationIndex: number = 0
+) {
   const img = images[rotationIndex];
-  context.drawImage(img, Math.floor(x - img.width / 2), Math.floor(y - img.height / 2));
+  context.drawImage(
+    img,
+    Math.floor(x - img.width / 2),
+    Math.floor(y - img.height / 2)
+  );
 }
 
 function generatePixels(patterns: string[], options, random: Random) {
   let pw = reduce(patterns, (w, p) => Math.max(w, p.length), 0);
   let ph = patterns.length;
-  var w = Math.round(pw * options.scaleX);
-  var h = Math.round(ph * options.scaleY);
+  var w = Math.round(pw * options.scalePatternX);
+  var h = Math.round(ph * options.scalePatternY);
   w += options.isMirrorX ? 1 : 2;
   h += options.isMirrorY ? 1 : 2;
-  let pixels = createPixels(patterns, pw, ph, w, h,
-    options.scaleX, options.scaleY, random);
+  let pixels = createPixels(
+    patterns,
+    pw,
+    ph,
+    w,
+    h,
+    options.scalePatternX,
+    options.scalePatternY,
+    random
+  );
   if (options.isMirrorX) {
     pixels = mirrorX(pixels, w, h);
     w *= 2;
@@ -195,24 +219,32 @@ function generatePixels(patterns: string[], options, random: Random) {
   return pixels;
 }
 
-function createPixels
-  (patterns: string[], pw, ph, w, h, scaleX, scaleY, random: Random) {
+function createPixels(
+  patterns: string[],
+  pw,
+  ph,
+  w,
+  h,
+  scalePatternX,
+  scalePatternY,
+  random: Random
+) {
   return timesMap(w, x => {
-    const px = Math.floor((x - 1) / scaleX);
+    const px = Math.floor((x - 1) / scalePatternX);
     return timesMap(h, y => {
-      const py = Math.floor((y - 1) / scaleY);
+      const py = Math.floor((y - 1) / scalePatternY);
       if (px < 0 || px >= pw || py < 0 || py >= ph) {
         return 0;
       }
-      const c = px < patterns[py].length ? patterns[py][px] : ' ';
+      const c = px < patterns[py].length ? patterns[py][px] : " ";
       let m = 0;
-      if (c === '-') {
+      if (c === "-") {
         m = random.get01() < 0.5 ? 1 : 0;
-      } else if (c === 'x' || c === 'X') {
+      } else if (c === "x" || c === "X") {
         m = random.get01() < 0.5 ? 1 : -1;
-      } else if (c === 'o' || c === 'O') {
+      } else if (c === "o" || c === "O") {
         m = -1;
-      } else if (c === '*') {
+      } else if (c === "*") {
         m = 1;
       }
       return m;
@@ -221,26 +253,31 @@ function createPixels
 }
 
 function mirrorX(pixels: number[][], w, h) {
-  return timesMap(w * 2, x => timesMap(h, y =>
-    x < w ? pixels[x][y] : pixels[w * 2 - x - 1][y]
-  ));
+  return timesMap(w * 2, x =>
+    timesMap(h, y => (x < w ? pixels[x][y] : pixels[w * 2 - x - 1][y]))
+  );
 }
 
 function mirrorY(pixels: number[][], w, h) {
-  return timesMap(w, x => timesMap(h * 2, y =>
-    y < h ? pixels[x][y] : pixels[x][h * 2 - y - 1]
-  ));
+  return timesMap(w, x =>
+    timesMap(h * 2, y => (y < h ? pixels[x][y] : pixels[x][h * 2 - y - 1]))
+  );
 }
 
 function createEdge(pixels: number[][], w, h) {
-  return timesMap(w, x => timesMap(h, y =>
-    ((pixels[x][y] === 0 &&
-      ((x - 1 >= 0 && pixels[x - 1][y] > 0) ||
-        (x + 1 < w && pixels[x + 1][y] > 0) ||
-        (y - 1 >= 0 && pixels[x][y - 1] > 0) ||
-        (y + 1 < h && pixels[x][y + 1] > 0))) ?
-      -1 : pixels[x][y])
-  ));
+  return timesMap(w, x =>
+    timesMap(
+      h,
+      y =>
+        pixels[x][y] === 0 &&
+        ((x - 1 >= 0 && pixels[x - 1][y] > 0) ||
+          (x + 1 < w && pixels[x + 1][y] > 0) ||
+          (y - 1 >= 0 && pixels[x][y - 1] > 0) ||
+          (y + 1 < h && pixels[x][y + 1] > 0))
+          ? -1
+          : pixels[x][y]
+    )
+  );
 }
 
 function createRotated(pixels: number[][], rotationNum: number) {
@@ -249,22 +286,23 @@ function createRotated(pixels: number[][], rotationNum: number) {
   const pcx = pw / 2;
   const pcy = ph / 2;
   const s = Math.max(pw, ph);
-  const w = Math.round(s * 1.5 / 2) * 2;
-  const h = Math.round(s * 1.5 / 2) * 2;
+  const w = Math.round((s * 1.5) / 2) * 2;
+  const h = Math.round((s * 1.5) / 2) * 2;
   const cx = w / 2;
   const cy = h / 2;
   let offset = { x: 0, y: 0 };
   return timesMap(rotationNum, ai => {
-    const angle = -ai * Math.PI * 2 / rotationNum;
-    return timesMap(w, x => timesMap(h, y => {
-      offset.x = x - cx;
-      offset.y = y - cy;
-      rotateVector(offset, angle);
-      const px = Math.round(offset.x + pcx);
-      const py = Math.round(offset.y + pcy);
-      return (px < 0 || px >= pw || py < 0 || py >= ph) ?
-        0 : pixels[px][py];
-    }));
+    const angle = (-ai * Math.PI * 2) / rotationNum;
+    return timesMap(w, x =>
+      timesMap(h, y => {
+        offset.x = x - cx;
+        offset.y = y - cy;
+        rotateVector(offset, angle);
+        const px = Math.round(offset.x + pcx);
+        const py = Math.round(offset.y + pcy);
+        return px < 0 || px >= pw || py < 0 || py >= ph ? 0 : pixels[px][py];
+      })
+    );
   });
 }
 
@@ -297,28 +335,40 @@ function createColored(pixels: number[][], options) {
   }
   const random = new Random();
   random.setSeed(options.seed);
-  return timesMap(w, x => timesMap(h, y => {
-    const p = pixels[x][y];
-    if ((p === 1 && !options.isShowingBody) ||
-      (p === -1 && !options.isShowingEdge)) {
-      return new Pixel();
-    }
-    if (p !== 0) {
-      var l = Math.sin((y - lightingStartY) / lightingHeight * Math.PI) *
-        options.colorLighting + (1 - options.colorLighting);
-      let v = (l * (1 - options.colorNoise) +
-        random.get01() * options.colorNoise) * options.value;
-      v = v >= 0 ? (v <= 1 ? v : 1) : 0;
-      if (p === -1) {
-        v *= (1 - options.edgeDarkness);
+  return timesMap(w, x =>
+    timesMap(h, y => {
+      const p = pixels[x][y];
+      if (
+        (p === 1 && !options.isShowingBody) ||
+        (p === -1 && !options.isShowingEdge)
+      ) {
+        return new Pixel();
       }
-      const px = new Pixel();
-      px.setFromHsv(options.hue, options.saturation, v, options.isLimitingColors);
-      return px;
-    } else {
-      return new Pixel();
-    }
-  }));
+      if (p !== 0) {
+        var l =
+          Math.sin(((y - lightingStartY) / lightingHeight) * Math.PI) *
+            options.colorLighting +
+          (1 - options.colorLighting);
+        let v =
+          (l * (1 - options.colorNoise) + random.get01() * options.colorNoise) *
+          options.value;
+        v = v >= 0 ? (v <= 1 ? v : 1) : 0;
+        if (p === -1) {
+          v *= 1 - options.edgeDarkness;
+        }
+        const px = new Pixel();
+        px.setFromHsv(
+          options.hue,
+          options.saturation,
+          v,
+          options.isLimitingColors
+        );
+        return px;
+      } else {
+        return new Pixel();
+      }
+    })
+  );
 }
 
 function getHashFromString(str: string) {
@@ -326,7 +376,7 @@ function getHashFromString(str: string) {
   const len = str.length;
   for (let i = 0; i < len; i++) {
     const chr = str.charCodeAt(i);
-    hash = ((hash << 5) - hash) + chr;
+    hash = (hash << 5) - hash + chr;
     hash |= 0;
   }
   return hash;
@@ -392,9 +442,9 @@ class Random {
     if (v === -0x7fffffff) {
       v = Math.floor(Math.random() * 0x7fffffff);
     }
-    this.x = v = 1812433253 * (v ^ (v >> 30))
-    this.y = v = 1812433253 * (v ^ (v >> 30)) + 1
-    this.z = v = 1812433253 * (v ^ (v >> 30)) + 2
+    this.x = v = 1812433253 * (v ^ (v >> 30));
+    this.y = v = 1812433253 * (v ^ (v >> 30)) + 1;
+    this.z = v = 1812433253 * (v ^ (v >> 30)) + 2;
     this.w = v = 1812433253 * (v ^ (v >> 30)) + 3;
     return this;
   }
@@ -404,7 +454,7 @@ class Random {
     this.x = this.y;
     this.y = this.z;
     this.z = this.w;
-    this.w = (this.w ^ (this.w >> 19)) ^ (t ^ (t >> 8));
+    this.w = this.w ^ (this.w >> 19) ^ (t ^ (t >> 8));
     return this.w;
   }
 
