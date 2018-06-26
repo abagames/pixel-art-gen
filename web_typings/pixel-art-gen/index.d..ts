@@ -39,6 +39,9 @@ declare module "pixel-art-gen" {
     saturation?: number;
     value?: number;
     rotationNum?: number;
+    scale?: number;
+    scaleX?: number;
+    scaleY?: number;
     scalePattern?: number;
     scalePatternX?: number;
     scalePatternY?: number;

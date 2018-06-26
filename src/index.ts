@@ -8,6 +8,9 @@ export let defaultOptions: PagOptions = {
   saturation: 0.8,
   value: 1,
   rotationNum: 1, // create rotated patterns
+  scale: null, // scaling
+  scaleX: null,
+  scaleY: null,
   scalePattern: 1, // scale the pattern
   scalePatternX: null,
   scalePatternY: null,
@@ -166,7 +169,7 @@ export function draw(
   const sby = Math.floor(y - ph / 2);
   for (let y = 0, sy = sby; y < ph; y++, sy++) {
     for (let x = 0, sx = sbx; x < pw; x++, sx++) {
-      var px = pxs[x][y];
+      const px = pxs[x][y];
       if (!px.isEmpty) {
         context.fillStyle = px.style;
         context.fillRect(sx, sy, 1, 1);
@@ -193,8 +196,8 @@ export function drawImage(
 function generatePixels(patterns: string[], options, random: Random) {
   let pw = reduce(patterns, (w, p) => Math.max(w, p.length), 0);
   let ph = patterns.length;
-  var w = Math.round(pw * options.scalePatternX);
-  var h = Math.round(ph * options.scalePatternY);
+  let w = Math.round(pw * options.scalePatternX);
+  let h = Math.round(ph * options.scalePatternY);
   w += options.isMirrorX ? 1 : 2;
   h += options.isMirrorY ? 1 : 2;
   let pixels = createPixels(
@@ -216,6 +219,13 @@ function generatePixels(patterns: string[], options, random: Random) {
     h *= 2;
   }
   pixels = createEdge(pixels, w, h);
+  if (
+    options.scale != null ||
+    options.scaleX != null ||
+    options.scaleY != null
+  ) {
+    pixels = scalePixels(pixels, w, h, options);
+  }
   return pixels;
 }
 
@@ -269,15 +279,69 @@ function createEdge(pixels: number[][], w, h) {
     timesMap(
       h,
       y =>
-        pixels[x][y] === 0 &&
-        ((x - 1 >= 0 && pixels[x - 1][y] > 0) ||
-          (x + 1 < w && pixels[x + 1][y] > 0) ||
-          (y - 1 >= 0 && pixels[x][y - 1] > 0) ||
-          (y + 1 < h && pixels[x][y + 1] > 0))
+        pixels[x][y] === 0 && checkAroundPixels(pixels, w, h, 1, x, y)
           ? -1
           : pixels[x][y]
     )
   );
+}
+
+function scalePixels(pixels: number[][], pw, ph, options) {
+  const scaleX =
+    options.scaleX != null
+      ? options.scaleX
+      : options.scale != null
+        ? options.scale
+        : 1;
+  const scaleY =
+    options.scaleY != null
+      ? options.scaleY
+      : options.scale != null
+        ? options.scale
+        : 1;
+  const w = Math.round(pw * scaleX);
+  const h = Math.round(ph * scaleY);
+  let scaledPixels = timesMap(w, x => {
+    const px = Math.floor((x - 1) / scaleX);
+    return timesMap(h, y => {
+      const py = Math.floor((y - 1) / scaleY);
+      if (px < 0 || px >= pw || py < 0 || py >= ph) {
+        return 0;
+      }
+      return pixels[px][py];
+    });
+  });
+  const scale = (scaleX + scaleY) / 2;
+  times(Math.floor((scale - 1) / 2), () => {
+    scaledPixels = scrapeEdge(scaledPixels, w, h);
+  });
+  return createEdge(scaledPixels, w, h);
+}
+
+function scrapeEdge(pixels: number[][], w, h) {
+  return timesMap(w, x =>
+    timesMap(
+      h,
+      y =>
+        pixels[x][y] === -1 && checkAroundPixels(pixels, w, h, 0, x, y)
+          ? 0
+          : pixels[x][y] === -1 && checkAroundPixels(pixels, w, h, 1, x, y)
+            ? 1
+            : pixels[x][y]
+    )
+  );
+}
+
+function checkAroundPixels(pixels: number[][], w, h, value, cx, cy) {
+  const offsets = [[-1, 0], [1, 0], [0, -1], [0, 1]];
+  return offsets.some(o => {
+    const x = cx + o[0];
+    const y = cy + o[1];
+    if (x < 0 || x >= w || y < 0 || y >= h) {
+      return false;
+    }
+    return pixels[x][y] === value;
+  });
 }
 
 function createRotated(pixels: number[][], rotationNum: number) {
@@ -345,7 +409,7 @@ function createColored(pixels: number[][], options) {
         return new Pixel();
       }
       if (p !== 0) {
-        var l =
+        const l =
           Math.sin(((y - lightingStartY) / lightingHeight) * Math.PI) *
             options.colorLighting +
           (1 - options.colorLighting);
