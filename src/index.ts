@@ -44,7 +44,7 @@ export function generate(patterns: string[], _options: PagOptions = {}) {
   }
   random.setSeed(rndSeed);
   if (options.hue == null) {
-    options.hue = random.get01();
+    options.hue = random.get();
   }
   if (options.scalePatternX == null) {
     options.scalePatternX = options.scalePattern;
@@ -249,9 +249,9 @@ function createPixels(
       const c = px < patterns[py].length ? patterns[py][px] : " ";
       let m = 0;
       if (c === "-") {
-        m = random.get01() < 0.5 ? 1 : 0;
+        m = random.get() < 0.5 ? 1 : 0;
       } else if (c === "x" || c === "X") {
-        m = random.get01() < 0.5 ? 1 : -1;
+        m = random.get() < 0.5 ? 1 : -1;
       } else if (c === "o" || c === "O") {
         m = -1;
       } else if (c === "*") {
@@ -414,7 +414,7 @@ function createColored(pixels: number[][], options) {
             options.colorLighting +
           (1 - options.colorLighting);
         let v =
-          (l * (1 - options.colorNoise) + random.get01() * options.colorNoise) *
+          (l * (1 - options.colorNoise) + random.get() * options.colorNoise) *
           options.value;
         v = v >= 0 ? (v <= 1 ? v : 1) : 0;
         if (p === -1) {
@@ -502,32 +502,46 @@ class Random {
   z: number;
   w: number;
 
-  setSeed(v: number = -0x7fffffff) {
-    if (v === -0x7fffffff) {
-      v = Math.floor(Math.random() * 0x7fffffff);
+  get(fromOrTo: number = 1, to: number = null) {
+    if (to == null) {
+      to = fromOrTo;
+      fromOrTo = 0;
     }
-    this.x = v = 1812433253 * (v ^ (v >> 30));
-    this.y = v = 1812433253 * (v ^ (v >> 30)) + 1;
-    this.z = v = 1812433253 * (v ^ (v >> 30)) + 2;
-    this.w = v = 1812433253 * (v ^ (v >> 30)) + 3;
+    return (this.getToMaxInt() / 0xffffffff) * (to - fromOrTo) + fromOrTo;
+  }
+
+  getInt(fromOrTo: number, to: number = null) {
+    return Math.floor(this.get(fromOrTo, to));
+  }
+
+  getPm() {
+    return this.getInt(2) * 2 - 1;
+  }
+
+  select(values: any[]) {
+    return values[this.getInt(values.length)];
+  }
+
+  setSeed(w: number = null) {
+    this.w = w != null ? w : Math.floor(Math.random() * 0xffffffff);
+    this.x = (0 | (this.w << 13)) >>> 0;
+    this.y = (0 | ((this.w >>> 9) ^ (this.x << 6))) >>> 0;
+    this.z = (0 | (this.y >>> 7)) >>> 0;
     return this;
   }
 
-  getInt() {
-    var t = this.x ^ (this.x << 11);
+  getToMaxInt() {
+    const t = this.x ^ (this.x << 11);
     this.x = this.y;
     this.y = this.z;
     this.z = this.w;
-    this.w = this.w ^ (this.w >> 19) ^ (t ^ (t >> 8));
+    this.w = (this.w ^ (this.w >>> 19) ^ (t ^ (t >>> 8))) >>> 0;
     return this.w;
-  }
-
-  get01() {
-    return this.getInt() / 0x7fffffff;
   }
 
   constructor() {
     this.setSeed();
-    this.get01 = this.get01.bind(this);
+    this.get = this.get.bind(this);
+    this.getToMaxInt = this.getToMaxInt.bind(this);
   }
 }
