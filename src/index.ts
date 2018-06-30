@@ -19,13 +19,21 @@ export let defaultOptions: PagOptions = {
   edgeDarkness: 0.4, // darkness of the edge pixels
   isShowingEdge: true, // show the edge pixels
   isShowingBody: true, // show the body pixels
-  isLimitingColors: false // limit the using colors
+  isLimitingColors: false, // limit the using colors
+  isUsingLetterForm: false, // using the letter form for the pattern
+  letterFormChar: "x", // the pattern letter for the letter form
+  letterFormFontFamily: "monospace", // font for the letter form
+  letterFormFontSize: 8
 };
 let generatedPixels = {};
 let seed = 0;
 
-export function generate(patterns: string[], _options: PagOptions = {}) {
+export function generate(
+  _patterns: string | string[],
+  _options: PagOptions = {}
+) {
   (<any>_options).baseSeed = seed;
+  let patterns = Array.isArray(_patterns) ? _patterns : _patterns.split("\n");
   const jso = JSON.stringify({ patterns, options: _options });
   if (generatedPixels[jso]) {
     return generatedPixels[jso];
@@ -52,6 +60,9 @@ export function generate(patterns: string[], _options: PagOptions = {}) {
   if (options.scalePatternY == null) {
     options.scalePatternY = options.scalePattern;
   }
+  if (options.isUsingLetterForm) {
+    patterns = generatePatternsFromLetterForm(patterns, options);
+  }
   let pixels = generatePixels(patterns, options, random);
   let result;
   if (options.rotationNum > 1) {
@@ -65,7 +76,10 @@ export function generate(patterns: string[], _options: PagOptions = {}) {
   return result;
 }
 
-export function generateImages(patterns: string[], _options = {}) {
+export function generateImages(
+  patterns: string | string[],
+  _options: PagOptions = {}
+) {
   const pixels = generate(patterns, _options);
   const width = pixels[0].length;
   const height = pixels[0][0].length;
@@ -191,6 +205,63 @@ export function drawImage(
     Math.floor(x - img.width / 2),
     Math.floor(y - img.height / 2)
   );
+}
+
+function generatePatternsFromLetterForm(
+  letters: string[],
+  options: PagOptions
+) {
+  let pw = reduce(letters, (w, p) => Math.max(w, p.length), 0);
+  let ph = letters.length;
+  const fontSize = options.letterFormFontSize;
+  let w = Math.round(pw * fontSize);
+  let h = Math.round(ph * fontSize * 1.2);
+  const canvas = document.createElement("canvas");
+  canvas.width = w;
+  canvas.height = h;
+  const context = canvas.getContext("2d");
+  context.font = `${fontSize}px ${options.letterFormFontFamily}`;
+  context.textBaseline = "top";
+  times(pw, x => {
+    times(ph, y => {
+      context.fillText(letters[y][x], x * 8, y * 10);
+    });
+  });
+  const pixels = context.getImageData(0, 0, w, h).data;
+  const rect = getPixelSize(pixels, w, h);
+  const lw = rect.ex - rect.bx + 1;
+  const lh = rect.ey - rect.by + 1;
+  let patterns = [];
+  times(lw, x => {
+    let line = "";
+    times(lh, y => {
+      let pi = (x + rect.bx + (rect.ey - y) * w) * 4 + 3;
+      line += pixels[pi] > 0 ? options.letterFormChar : " ";
+    });
+    patterns.push(line);
+  });
+  console.log(patterns);
+  return patterns;
+}
+
+function getPixelSize(pixels, w, h) {
+  let bx = w;
+  let ex = -1;
+  let by = h;
+  let ey = -1;
+  let pi = 3;
+  times(h, y => {
+    times(w, x => {
+      if (pixels[pi] > 0) {
+        bx = x < bx ? x : bx;
+        ex = x > ex ? x : ex;
+        by = y < by ? y : by;
+        ey = y > ey ? y : ey;
+      }
+      pi += 4;
+    });
+  });
+  return { bx, ex, by, ey };
 }
 
 function generatePixels(patterns: string[], options, random: Random) {

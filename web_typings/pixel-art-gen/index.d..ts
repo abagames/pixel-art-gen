@@ -51,5 +51,9 @@ declare module "pixel-art-gen" {
     isShowingEdge?: boolean;
     isShowingBody?: boolean;
     isLimitingColors?: boolean;
+    isUsingLetterForm?: boolean;
+    letterFormChar?: string;
+    letterFormFontFamily?: string;
+    letterFormFontSize?: number;
   }
 }
