@@ -14,6 +14,8 @@ new p5(p => {
   let addingScore = 1;
   let isTouched = false;
   let context;
+  let titleImages: HTMLImageElement[];
+
   p.setup = () => {
     const seed = 9682886;
     pag.setSeed(seed);
@@ -29,8 +31,15 @@ new p5(p => {
       rotationNum,
       scalePattern: 2
     });
+    titleImages = pag.generateImages("RECOIL", {
+      isUsingLetterForm: true,
+      letterFormChar: "*",
+      isMirrorY: false,
+      rotationNum: 1
+    });
     setStars();
   };
+
   p.touchStarted = () => {
     sss.playEmpty();
     if (!isInGame && ticks > 0) {
@@ -42,9 +51,11 @@ new p5(p => {
     }
     isTouched = true;
   };
+
   p.touchMoved = () => {
     return false;
   };
+
   p.draw = () => {
     sss.update();
     if (isInGame && ticks === 180) {
@@ -75,12 +86,16 @@ new p5(p => {
         i++;
       }
     }
+    if (!isInGame) {
+      pag.drawImage(context, titleImages, 64, 40);
+    }
     p.fill("#ace");
     p.textSize(9);
     p.text(score, 5, 10);
     p.text(`+${addingScore}`, 5, 20);
     ticks++;
   };
+
   const setPlayer = () => {
     if (player != null) {
       player.isAlive = false;
@@ -140,6 +155,7 @@ new p5(p => {
     player.priority = 0;
     actors.push(player);
   };
+
   const setEnemy = () => {
     const enemy: any = {};
     enemy.images = pag.generateImages([" x", "xx"], { isMirrorX: true });
@@ -177,6 +193,7 @@ new p5(p => {
     enemy.priority = 1;
     actors.push(enemy);
   };
+
   const setParticles = (num, pos, angle = null) => {
     for (var i = 0; i < num; i++) {
       const part: any = {};
@@ -209,6 +226,7 @@ new p5(p => {
       actors.push(part);
     }
   };
+
   const setStars = () => {
     for (let i = 0; i < 32; i++) {
       const star: any = {};
@@ -238,6 +256,7 @@ new p5(p => {
       actors.push(star);
     }
   };
+
   function drawPixels(actor) {
     let a = actor.angle;
     if (a < 0) {
@@ -246,6 +265,7 @@ new p5(p => {
     const ri = Math.round(a / ((Math.PI * 2) / rotationNum)) % rotationNum;
     pag.drawImage(context, actor.images, actor.pos.x, actor.pos.y, ri);
   }
+
   function getActors(name: string) {
     let result = [];
     forEach(actors, a => {
@@ -255,11 +275,13 @@ new p5(p => {
     });
     return result;
   }
+
   function forEach(array: any[], func: Function) {
     for (let i = 0; i < array.length; i++) {
       func(array[i]);
     }
   }
+
   const onSeedChanged = (seed: number) => {
     pag.setSeed(seed);
     sss.reset();
