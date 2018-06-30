@@ -211,11 +211,11 @@ function generatePatternsFromLetterForm(
   letters: string[],
   options: PagOptions
 ) {
-  let pw = reduce(letters, (w, p) => Math.max(w, p.length), 0);
-  let ph = letters.length;
+  const pw = reduce(letters, (w, p) => Math.max(w, p.length), 0);
+  const ph = letters.length;
   const fontSize = options.letterFormFontSize;
-  let w = Math.round(pw * fontSize);
-  let h = Math.round(ph * fontSize * 1.2);
+  const w = Math.round(pw * fontSize);
+  const h = Math.round(ph * fontSize * 1.2);
   const canvas = document.createElement("canvas");
   canvas.width = w;
   canvas.height = h;
@@ -224,7 +224,7 @@ function generatePatternsFromLetterForm(
   context.textBaseline = "top";
   times(pw, x => {
     times(ph, y => {
-      context.fillText(letters[y][x], x * 8, y * 10);
+      context.fillText(letters[y][x], x * fontSize, y * fontSize * 1.2);
     });
   });
   const pixels = context.getImageData(0, 0, w, h).data;
