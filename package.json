@@ -13,7 +13,7 @@
   },
   "dependencies": {},
   "scripts": {
-    "start": "webpack-serve --sample=shot",
+    "start": "webpack-serve --sample=recoil",
     "build": "webpack"
   }
 }

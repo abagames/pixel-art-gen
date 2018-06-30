@@ -1,11 +1,11 @@
-# pixel-art-gen ([Demo](https://abagames.github.io/pixel-art-gen/samples/index.html?shot))
+# pixel-art-gen ([Demo](https://abagames.github.io/pixel-art-gen/samples/index.html?recoil))
 
 Generate a pixel art from a simple pattern string.
 (based on [pixel-sprite-generator](https://github.com/zfedoran/pixel-sprite-generator))
 
 ### How to use
 
-See the [sample code](https://github.com/abagames/pixel-art-gen/blob/master/src/samples/shot.ts).
+See the [sample code](https://github.com/abagames/pixel-art-gen/blob/master/src/samples/recoil.ts).
 
 Include [pixel-art-gen/index.js](https://github.com/abagames/pixel-art-gen/blob/master/docs/pixel-art-gen/index.js) script.
 
@@ -75,6 +75,11 @@ Options described below are available.
   isShowingEdge: true, // show the edge pixels
   isShowingBody: true, // show the body pixels
   isLimitingColors: false, // limit the using colors
+  isUsingLetterForm: false, // using the letter form for the pattern
+  letterFormChar: "x", // the pattern letter for the letter form
+  letterFormFontFamily: "monospace", // font for the letter form
+  letterFormFontSize: 8,
+  isRotatingLetterForm: false // rotate the letter form to the right  
 ```
 
 You can set the default options of the library.
