@@ -55,5 +55,6 @@ declare module "pixel-art-gen" {
     letterFormChar?: string;
     letterFormFontFamily?: string;
     letterFormFontSize?: number;
+    isRotatingLetterForm?: boolean;
   }
 }

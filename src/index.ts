@@ -23,7 +23,8 @@ export let defaultOptions: PagOptions = {
   isUsingLetterForm: false, // using the letter form for the pattern
   letterFormChar: "x", // the pattern letter for the letter form
   letterFormFontFamily: "monospace", // font for the letter form
-  letterFormFontSize: 8
+  letterFormFontSize: 8,
+  isRotatingLetterForm: false // rotate the letter form to the right
 };
 let generatedPixels = {};
 let seed = 0;
@@ -232,15 +233,25 @@ function generatePatternsFromLetterForm(
   const lw = rect.ex - rect.bx + 1;
   const lh = rect.ey - rect.by + 1;
   let patterns = [];
-  times(lw, x => {
-    let line = "";
-    times(lh, y => {
-      let pi = (x + rect.bx + (rect.ey - y) * w) * 4 + 3;
-      line += pixels[pi] > 0 ? options.letterFormChar : " ";
+  if (options.isRotatingLetterForm) {
+    times(lw, x => {
+      let line = "";
+      times(lh, y => {
+        const pi = (x + rect.bx + (rect.ey - y) * w) * 4 + 3;
+        line += pixels[pi] > 0.5 ? options.letterFormChar : " ";
+      });
+      patterns.push(line);
     });
-    patterns.push(line);
-  });
-  console.log(patterns);
+  } else {
+    times(lh, y => {
+      let line = "";
+      times(lw, x => {
+        const pi = (x + rect.bx + (y + rect.by) * w) * 4 + 3;
+        line += pixels[pi] > 0.5 ? options.letterFormChar : " ";
+      });
+      patterns.push(line);
+    });
+  }
   return patterns;
 }
 
