@@ -17,8 +17,20 @@ let titleImages: HTMLImageElement[];
 const screenSize = 128;
 const canvasSize = 512;
 let cursorPos = { x: 0, y: 0 };
+declare const WebFont: any;
 
 window.onload = () => {
+  WebFont.load({
+    google: {
+      families: ["Inconsolata"]
+    },
+    active: init,
+    inactive: init,
+    timeout: 2000
+  });
+};
+
+function init() {
   const seed = 9682886;
   pag.setSeed(seed);
   sss.init(seed);
@@ -36,6 +48,7 @@ window.onload = () => {
   });
   titleImages = pag.generateImages("RECOIL", {
     isUsingLetterForm: true,
+    letterFormFontFamily: "'Inconsolata', monospace",
     letterFormChar: "*",
     isMirrorY: false,
     rotationNum: 1
@@ -53,7 +66,7 @@ window.onload = () => {
   document.onmouseup = onCursorUp;
   document.ontouchend = onCursorUp;
   update();
-};
+}
 
 function onCursorDown(e) {
   sss.playEmpty();
