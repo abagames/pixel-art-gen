@@ -125,7 +125,7 @@ function update() {
     pag.drawImage(context, titleImages, 64, 40);
   }
   context.fillStyle = "#ace";
-  context.font = "9px monospace";
+  context.font = "9px 'Inconsolata', monospace";
   context.fillText(`${score}`, 5, 10);
   context.fillText(`+${addingScore}`, 5, 20);
   ticks++;
