@@ -1,11 +1,14 @@
 declare module "pixel-art-gen" {
-  function generate(pattern: string[], options?: PagOptions): Pixel[][][];
+  function generate(
+    pattern: string | string[],
+    options?: PagOptions
+  ): Pixel[][][];
   function generateImages(
-    pattern: string[],
+    pattern: string | string[],
     options?: PagOptions
   ): HTMLImageElement[];
   function setSeed(seed?: number);
-  function setDefaultOptions(_defaultOptions: PagOptions);
+  function setDefaultOptions(defaultOptions: PagOptions);
   function draw(
     context: CanvasRenderingContext2D,
     pixels: Pixel[][][],

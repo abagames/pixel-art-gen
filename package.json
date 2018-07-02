@@ -2,21 +2,26 @@
   "name": "pixel-art-gen",
   "version": "1.0.0",
   "description": "Generate a pixel art",
-  "author": "ABA",
-  "license": "MIT",
+  "main": "build/index.js",
+  "typings": "typings/index.d.ts",
   "devDependencies": {
     "awesome-typescript-loader": "^5.1.1",
+    "sounds-some-sounds": "^1.0.0",
     "typescript": "^2.9.2",
     "webpack": "^4.12.0",
     "webpack-cli": "^3.0.8",
     "webpack-serve": "^1.0.4"
   },
-  "dependencies": {
-    "sounds-some-sounds": "^1.0.0"
-  },
   "scripts": {
     "start": "webpack-serve --sample=recoil",
     "build": "webpack",
     "build_sample": "webpack --env.sample=recoil"
-  }
+  },
+  "author": "abagames",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/abagames/pixel-art-gen.git"
+  },
+  "homepage": "https://github.com/abagames/pixel-art-gen"
 }
