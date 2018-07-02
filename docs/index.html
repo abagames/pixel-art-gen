@@ -11,8 +11,12 @@
 
 <body>
   <script>
+    var defaultSampleName = 'recoil';
     var sampleName = window.location.search.substring(1);
     sampleName = sampleName.replace(/\W/g, '');
+    if (sampleName.length <= 0) {
+      sampleName = defaultSampleName;
+    }
     document.title = "pixel-art-gen demo - " + sampleName;
     var script = document.createElement('script');
     script.src = sampleName + '.js';

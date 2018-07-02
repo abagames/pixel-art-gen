@@ -16,6 +16,7 @@
   },
   "scripts": {
     "start": "webpack-serve --sample=recoil",
-    "build": "webpack"
+    "build": "webpack",
+    "build_sample": "webpack --env.sample=recoil"
   }
 }

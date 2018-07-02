@@ -1,4 +1,4 @@
-# pixel-art-gen ([Demo](https://abagames.github.io/pixel-art-gen/samples/index.html?recoil))
+# pixel-art-gen ([Demo](https://abagames.github.io/pixel-art-gen/index.html?recoil))
 
 Generate a pixel art from a simple pattern string.
 (based on [pixel-sprite-generator](https://github.com/zfedoran/pixel-sprite-generator))
@@ -7,7 +7,7 @@ Generate a pixel art from a simple pattern string.
 
 See the [sample code](https://github.com/abagames/pixel-art-gen/blob/master/src/samples/recoil.ts).
 
-Include [pixel-art-gen/index.js](https://github.com/abagames/pixel-art-gen/blob/master/docs/pixel-art-gen/index.js) script.
+Include [build/index.js](https://github.com/abagames/pixel-art-gen/blob/master/build/index.js) script.
 
 `pag.generate` function returns a generated pixel art in a 3d `Pixel` array.
 ([rotated pattern index][x][y])
