@@ -11,7 +11,9 @@
     "webpack-cli": "^3.0.8",
     "webpack-serve": "^1.0.4"
   },
-  "dependencies": {},
+  "dependencies": {
+    "sounds-some-sounds": "^1.0.0"
+  },
   "scripts": {
     "start": "webpack-serve --sample=recoil",
     "build": "webpack"
