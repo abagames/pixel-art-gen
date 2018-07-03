@@ -15,7 +15,6 @@ let canvas: HTMLCanvasElement;
 let context: CanvasRenderingContext2D;
 let titleImages: HTMLImageElement[];
 const screenSize = 128;
-const canvasSize = 512;
 let cursorPos = { x: 0, y: 0 };
 declare const WebFont: any;
 
@@ -38,7 +37,6 @@ function init() {
   debug.initSeedUi(onSeedChanged);
   canvas = document.createElement("canvas");
   canvas.width = canvas.height = screenSize;
-  canvas.style.width = canvas.style.height = `${canvasSize}px`;
   document.body.appendChild(canvas);
   context = canvas.getContext("2d");
   pag.setDefaultOptions({
@@ -86,8 +84,10 @@ function onCursorDown(x: number, y: number) {
 }
 
 function onCursorMove(x: number, y: number) {
-  cursorPos.x = ((x - canvas.offsetLeft) * screenSize) / canvasSize;
-  cursorPos.y = ((y - canvas.offsetTop) * screenSize) / canvasSize;
+  cursorPos.x =
+    ((x - canvas.offsetLeft) / canvas.clientWidth + 0.5) * screenSize;
+  cursorPos.y =
+    ((y - canvas.offsetTop) / canvas.clientHeight + 0.5) * screenSize;
 }
 
 function onCursorUp(e: Event) {
