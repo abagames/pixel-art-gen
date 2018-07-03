@@ -54,8 +54,12 @@ function init() {
     rotationNum: 1
   });
   setStars();
-  document.onmousedown = onCursorDown;
-  document.ontouchstart = onCursorDown;
+  document.onmousedown = e => {
+    onCursorDown(e.clientX, e.clientY);
+  };
+  document.ontouchstart = e => {
+    onCursorDown(e.touches[0].clientX, e.touches[0].clientY);
+  };
   document.onmousemove = e => {
     onCursorMove(e.clientX, e.clientY);
   };
@@ -68,7 +72,7 @@ function init() {
   update();
 }
 
-function onCursorDown(e) {
+function onCursorDown(x: number, y: number) {
   sss.playEmpty();
   if (!isInGame && ticks > 0) {
     isInGame = true;
@@ -78,6 +82,7 @@ function onCursorDown(e) {
     setPlayer();
   }
   isTouched = true;
+  onCursorMove(x, y);
 }
 
 function onCursorMove(x: number, y: number) {
@@ -85,7 +90,7 @@ function onCursorMove(x: number, y: number) {
   cursorPos.y = ((y - canvas.offsetTop) * screenSize) / canvasSize;
 }
 
-function onCursorUp(e) {
+function onCursorUp(e: Event) {
   e.preventDefault();
 }
 
