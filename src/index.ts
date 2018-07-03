@@ -27,6 +27,7 @@ export let defaultOptions: PagOptions = {
   isRotatingLetterForm: false // rotate the letter form to the right
 };
 let generatedPixels = {};
+let generatedImages = {};
 let seed = 0;
 
 export function generate(
@@ -78,9 +79,15 @@ export function generate(
 }
 
 export function generateImages(
-  patterns: string | string[],
+  _patterns: string | string[],
   _options: PagOptions = {}
 ) {
+  (<any>_options).baseSeed = seed;
+  let patterns = Array.isArray(_patterns) ? _patterns : _patterns.split("\n");
+  const jso = JSON.stringify({ patterns, options: _options });
+  if (generatedImages[jso]) {
+    return generatedImages[jso];
+  }
   const pixels = generate(patterns, _options);
   const width = pixels[0].length;
   const height = pixels[0][0].length;
@@ -96,6 +103,7 @@ export function generateImages(
     image.src = canvas.toDataURL();
     images.push(image);
   }
+  generatedImages[jso] = images;
   return images;
 }
 
