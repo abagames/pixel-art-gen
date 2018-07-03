@@ -5,20 +5,21 @@ export function initSeedUi(onSeedChanged: Function) {
     'random seed: <input type="number" id="seed" value="0"></input>' +
     '<button id="set">set</button>';
   document.getElementsByTagName("body")[0].appendChild(p);
-  var changeElm = document.getElementById("change");
-  var seedElm = <HTMLInputElement>document.getElementById("seed");
-  var setElm = document.getElementById("set");
-  changeElm.onclick = function() {
-    seedElm.value = Math.floor(Math.random() * 9999999).toString();
+  const changeButton = document.getElementById("change") as HTMLButtonElement;
+  const seedInput = document.getElementById("seed") as HTMLInputElement;
+  const setButton = document.getElementById("set");
+  changeButton.onclick = function() {
+    seedInput.value = Math.floor(Math.random() * 9999999).toString();
     onSeedChanging();
   };
-  setElm.onclick = onSeedChanging;
+  setButton.onclick = onSeedChanging;
   function onSeedChanging() {
-    onSeedChanged(Number(seedElm.value));
+    onSeedChanged(Number(seedInput.value));
   }
 }
+
 export function enableShowingErrors() {
-  var result = document.createElement("pre");
+  const result = document.createElement("pre");
   result.setAttribute("id", "result");
   document.getElementsByTagName("body")[0].appendChild(result);
   window.addEventListener("error", function(error: any) {
