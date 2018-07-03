@@ -1,4 +1,6 @@
-# pixel-art-gen ([Demo](https://abagames.github.io/pixel-art-gen/index.html?recoil))
+# pixel-art-gen
+
+[Demo](https://abagames.github.io/pixel-art-gen/index.html?recoil)
 
 Generate a pixel art from a simple pattern string.
 (based on [pixel-sprite-generator](https://github.com/zfedoran/pixel-sprite-generator))
@@ -10,10 +12,10 @@ See the [sample code](https://github.com/abagames/pixel-art-gen/blob/master/src/
 Include [build/index.js](https://github.com/abagames/pixel-art-gen/blob/master/build/index.js) script or install from npm.
 
 ```
-% npm install pixel-art-gen
+% npm i pixel-art-gen
 ```
 
-`pag.generate` function returns a generated pixel art in a 3d `Pixel` array.
+`pag.generate` function returns a generated pixel art in a `Pixel` array.
 ([rotated pattern index][x][y])
 
 ```js
@@ -63,19 +65,22 @@ enemy.pixels = pag.generate([" x", "xx"], { isMirrorX: true });
 Options described below are available.
 
 ```js
-  isMirrorX: false,    // mirror the pattern in the x-axis
-  isMirrorY: false,    // mirror the pattern in the y-axis
-  seed: 0,             // random seed
-  hue: null,           // base color (hue changes randomly when hue = null)
+  isMirrorX: false, // mirror the pattern in the x-axis
+  isMirrorY: false, // mirror the pattern in the y-axis
+  seed: 0, // random seed
+  hue: null, // base color (hue changes randomly when hue = null)
   saturation: 0.8,
   value: 1,
-  rotationNum: 1,      // create rotated patterns
-  scale: 1,            // scaling
+  rotationNum: 1, // create rotated patterns
+  scale: null, // scaling
   scaleX: null,
   scaleY: null,
-  colorNoise: 0.1,     // how often the color changes randomly
-  colorLighting: 1,    // lighting effect for the color
-  edgeDarkness: 0.4,   // darkness of the edge pixels
+  scalePattern: 1, // scale the pattern
+  scalePatternX: null,
+  scalePatternY: null,
+  colorNoise: 0.1, // how often the color changes randomly
+  colorLighting: 1, // lighting effect for the color
+  edgeDarkness: 0.4, // darkness of the edge pixels
   isShowingEdge: true, // show the edge pixels
   isShowingBody: true, // show the body pixels
   isLimitingColors: false, // limit the using colors
@@ -83,7 +88,7 @@ Options described below are available.
   letterFormChar: "x", // the pattern letter for the letter form
   letterFormFontFamily: "monospace", // font for the letter form
   letterFormFontSize: 8,
-  isRotatingLetterForm: false // rotate the letter form to the right  
+  isRotatingLetterForm: false // rotate the letter form to the right
 ```
 
 You can set the default options of the library.
