@@ -117,7 +117,14 @@ function update() {
         addingScore = 1;
       }
     }
-    drawPixels(a);
+    if (a.images != null) {
+      drawPixels(a);
+    }
+    if (a.rectColor != null) {
+      const rc = a.rectColor;
+      context.fillStyle = `rgb(${rc.r}, ${rc.g}, ${rc.b})`;
+      context.fillRect(a.pos.x, a.pos.y, 1, 1);
+    }
   });
   for (let i = 0; i < actors.length; ) {
     if (actors[i].isAlive === false) {
@@ -267,11 +274,11 @@ function setParticles(num, pos, angle = null) {
 function setStars() {
   for (let i = 0; i < 32; i++) {
     const star: any = {};
-    star.images = pag.generateImages(["o"], {
-      isMirrorY: false,
-      hue: Math.random(),
-      saturation: 0.4
-    });
+    star.rectColor = {
+      r: Math.floor(randomFromTo(128, 256)),
+      g: Math.floor(randomFromTo(128, 256)),
+      b: Math.floor(randomFromTo(128, 256))
+    };
     star.pos = { x: randomFromTo(-16, 144), y: randomFromTo(-16, 144) };
     star.vel = { x: 0, y: 0 };
     star.angle = 0;
