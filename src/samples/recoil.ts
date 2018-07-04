@@ -1,6 +1,7 @@
 import * as pag from "../index";
 import * as debug from "./debug";
 import * as sss from "sounds-some-sounds";
+//import * as gcc from "gif-capture-canvas";
 declare const require: any;
 
 let isInGame = false;
@@ -44,6 +45,7 @@ function init() {
     rotationNum,
     scalePattern: 2
   });
+  //gcc.setOptions({ scale: 2 });
   titleImages = pag.generateImages("RECOIL", {
     isUsingLetterForm: true,
     letterFormFontFamily: "'Inconsolata', monospace",
@@ -147,6 +149,7 @@ function update() {
   context.fillText(`${score}`, 5, 10);
   context.fillText(`+${addingScore}`, 5, 20);
   ticks++;
+  //gcc.capture(canvas);
 }
 
 function setPlayer() {

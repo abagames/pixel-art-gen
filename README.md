@@ -1,9 +1,13 @@
 # pixel-art-gen
 
-[Demo](https://abagames.github.io/pixel-art-gen/index.html?recoil)
-
 Generate a pixel art from a simple pattern string.
 (based on [pixel-sprite-generator](https://github.com/zfedoran/pixel-sprite-generator))
+
+### Demo
+
+[recoil](https://abagames.github.io/pixel-art-gen/index.html?recoil)
+
+![recoil screenshot](https://abagames.github.io/pixel-art-gen/recoil.gif)
 
 ### How to use
 
