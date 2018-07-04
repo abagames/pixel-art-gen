@@ -14,9 +14,9 @@
     "webpack-serve": "^1.0.4"
   },
   "scripts": {
-    "start": "webpack-serve --sample=recoil",
+    "start": "webpack-serve --sample=ships",
     "build": "webpack",
-    "build_sample": "webpack --env.sample=recoil"
+    "build_sample": "webpack --env.sample=ships"
   },
   "author": "abagames",
   "license": "MIT",

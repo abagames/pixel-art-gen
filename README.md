@@ -5,6 +5,10 @@ Generate a pixel art from a simple pattern string.
 
 ### Demo
 
+[ships](https://abagames.github.io/pixel-art-gen/index.html?ships)
+
+![ships screenshot](https://abagames.github.io/pixel-art-gen/ships.gif)
+
 [recoil](https://abagames.github.io/pixel-art-gen/index.html?recoil)
 
 ![recoil screenshot](https://abagames.github.io/pixel-art-gen/recoil.gif)
