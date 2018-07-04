@@ -1,5 +1,3 @@
-import { PagOptions } from "pixel-art-gen";
-
 export let defaultOptions: PagOptions = {
   isMirrorX: false, // mirror the pattern in the x-axis
   isMirrorY: false, // mirror the pattern in the y-axis
@@ -33,7 +31,7 @@ let seed = 0;
 export function generate(
   _patterns: string | string[],
   _options: PagOptions = {}
-) {
+): Pixel[][][] {
   (<any>_options).baseSeed = seed;
   let patterns = Array.isArray(_patterns) ? _patterns : _patterns.split("\n");
   const jso = JSON.stringify({ patterns, options: _options });
@@ -81,7 +79,7 @@ export function generate(
 export function generateImages(
   _patterns: string | string[],
   _options: PagOptions = {}
-) {
+): HTMLImageElement[] {
   (<any>_options).baseSeed = seed;
   let patterns = Array.isArray(_patterns) ? _patterns : _patterns.split("\n");
   const jso = JSON.stringify({ patterns, options: _options });
@@ -634,4 +632,31 @@ class Random {
     this.get = this.get.bind(this);
     this.getToMaxInt = this.getToMaxInt.bind(this);
   }
+}
+
+export interface PagOptions {
+  isMirrorX?: boolean;
+  isMirrorY?: boolean;
+  seed?: number;
+  hue?: number;
+  saturation?: number;
+  value?: number;
+  rotationNum?: number;
+  scale?: number;
+  scaleX?: number;
+  scaleY?: number;
+  scalePattern?: number;
+  scalePatternX?: number;
+  scalePatternY?: number;
+  colorNoise?: number;
+  colorLighting?: number;
+  edgeDarkness?: number;
+  isShowingEdge?: boolean;
+  isShowingBody?: boolean;
+  isLimitingColors?: boolean;
+  isUsingLetterForm?: boolean;
+  letterFormChar?: string;
+  letterFormFontFamily?: string;
+  letterFormFontSize?: number;
+  isRotatingLetterForm?: boolean;
 }
