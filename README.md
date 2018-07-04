@@ -23,7 +23,7 @@ Include [build/index.js](https://github.com/abagames/pixel-art-gen/blob/master/b
 % npm i pixel-art-gen
 ```
 
-`pag.generate` function returns a generated pixel art in a `Pixel` array.
+`pag.generate` function returns a generated pixel art in a `Pixel` array,
 ([rotated pattern index][x][y])
 
 ```js
@@ -35,6 +35,12 @@ Include [build/index.js](https://github.com/abagames/pixel-art-gen/blob/master/b
 // 'o': an edge
 // '*': a body
 player.pixels = pag.generate([" x", "xxxx"]);
+```
+
+or use `pag.generateImages` to get images.
+
+```js
+player.images = pag.generateImages([" x", "xxxx"]);
 ```
 
 `Pixel` instance consists of rgb colors, an isEmpty boolean value and a style string.
@@ -49,7 +55,7 @@ class Pixel {
 }
 ```
 
-Use the 'pag.draw' function to draw the generated pixel art.
+Use the `pag.draw` function to draw the generated pixel art,
 
 ```js
 // draw a generated pixels
@@ -63,7 +69,13 @@ function drawPixels(actor) {
 }
 ```
 
-Options can be specified in the 2nd arg of the `pag.generate` function.
+or use `pag.drawImages` to draw images.
+
+```js
+pag.drawImage(context, actor.images, actor.pos.x, actor.pos.y, ri);
+```
+
+Options can be specified in the 2nd arg of the `pag.generate` (or `pag.generateImages`) function.
 
 ```js
 // specify the options in the 2nd arg
