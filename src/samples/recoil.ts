@@ -36,6 +36,9 @@ function init() {
   sss.init(seed);
   debug.enableShowingErrors();
   debug.initSeedUi(onSeedChanged);
+  const p = document.createElement("p");
+  p.innerText = "[Click/Touch]: shot";
+  document.body.appendChild(p);
   canvas = document.createElement("canvas");
   canvas.width = canvas.height = screenSize;
   document.body.appendChild(canvas);
