@@ -52,21 +52,31 @@ function init() {
     rotationNum: 1
   });
   setStars();
-  document.onmousedown = e => {
+  document.addEventListener("mousedown", e => {
     onCursorDown(e.clientX, e.clientY);
-  };
-  document.ontouchstart = e => {
+  });
+  document.addEventListener("touchstart", e => {
     onCursorDown(e.touches[0].clientX, e.touches[0].clientY);
-  };
-  document.onmousemove = e => {
+  });
+  document.addEventListener("mousemove", e => {
     onCursorMove(e.clientX, e.clientY);
-  };
-  document.ontouchmove = e => {
-    e.preventDefault();
-    onCursorMove(e.touches[0].clientX, e.touches[0].clientY);
-  };
-  document.onmouseup = onCursorUp;
-  document.ontouchend = onCursorUp;
+  });
+  document.addEventListener(
+    "touchmove",
+    e => {
+      e.preventDefault();
+      onCursorMove(e.touches[0].clientX, e.touches[0].clientY);
+    },
+    { passive: false }
+  );
+  document.addEventListener(
+    "touchend",
+    e => {
+      e.preventDefault();
+      (e.target as any).click();
+    },
+    { passive: false }
+  );
   update();
 }
 
@@ -88,10 +98,6 @@ function onCursorMove(x: number, y: number) {
     ((x - canvas.offsetLeft) / canvas.clientWidth + 0.5) * screenSize;
   cursorPos.y =
     ((y - canvas.offsetTop) / canvas.clientHeight + 0.5) * screenSize;
-}
-
-function onCursorUp(e: Event) {
-  e.preventDefault();
 }
 
 function update() {
