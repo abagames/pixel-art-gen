@@ -7,11 +7,11 @@ Generate a pixel art from a simple pattern string.
 
 [ships](https://abagames.github.io/pixel-art-gen/index.html?ships)
 
-![ships screenshot](https://abagames.github.io/pixel-art-gen/ships.gif)
+[![ships screenshot](https://abagames.github.io/pixel-art-gen/ships.gif)](https://abagames.github.io/pixel-art-gen/index.html?ships)
 
 [recoil](https://abagames.github.io/pixel-art-gen/index.html?recoil)
 
-![recoil screenshot](https://abagames.github.io/pixel-art-gen/recoil.gif)
+[![recoil screenshot](https://abagames.github.io/pixel-art-gen/recoil.gif)](https://abagames.github.io/pixel-art-gen/index.html?recoil)
 
 ### How to use
 
