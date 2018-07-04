@@ -23,8 +23,7 @@ Include [build/index.js](https://github.com/abagames/pixel-art-gen/blob/master/b
 % npm i pixel-art-gen
 ```
 
-`pag.generate` function returns a generated pixel art in a `Pixel` array,
-([rotated pattern index][x][y])
+`pag.generate` function returns a generated pixel art in a `Pixel` array ([rotated pattern index][x][y]),
 
 ```js
 // generate a pixel art
