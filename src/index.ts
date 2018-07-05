@@ -80,6 +80,21 @@ export function generateImages(
   _patterns: string | string[],
   _options: PagOptions = {}
 ): HTMLImageElement[] {
+  return _generateImages(_patterns, _options);
+}
+
+export function generateImagesPromise(
+  _patterns: string | string[],
+  _options: PagOptions = {}
+): Promise<HTMLImageElement[]> {
+  return _generateImages(_patterns, _options, true);
+}
+
+function _generateImages(
+  _patterns: string | string[],
+  _options: PagOptions = {},
+  isUsingPromise = false
+) {
   (<any>_options).baseSeed = seed;
   let patterns = Array.isArray(_patterns) ? _patterns : _patterns.split("\n");
   const jso = JSON.stringify({ patterns, options: _options });
@@ -94,15 +109,25 @@ export function generateImages(
   canvas.height = height;
   const context = canvas.getContext("2d");
   let images = [];
+  let imagePromises = [];
   for (let i = 0; i < pixels.length; i++) {
     context.clearRect(0, 0, width, height);
     draw(context, pixels, width / 2, height / 2, i);
     const image = new Image();
+    if (isUsingPromise) {
+      imagePromises.push(
+        new Promise((resolve, reject) => {
+          image.onload = e => {
+            resolve(image);
+          };
+        })
+      );
+    }
     image.src = canvas.toDataURL();
     images.push(image);
   }
   generatedImages[jso] = images;
-  return images;
+  return isUsingPromise ? Promise.all(imagePromises) : images;
 }
 
 export function setSeed(_seed: number = 0) {

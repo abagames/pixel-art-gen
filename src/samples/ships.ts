@@ -33,30 +33,30 @@ const pattern = `
 -x--
 -x-----`;
 
-function draw() {
+async function draw() {
   context.fillStyle = "black";
   context.fillRect(0, 0, screenSize, screenSize);
   for (let i = 0; i < 8; i++) {
-    const ps = pag.generate(pattern, {
+    const ps = await pag.generateImagesPromise(pattern, {
       scalePattern: 2,
       seed: (i + 7) * 1001
     });
-    pag.draw(context, ps, (i + 0.5) * 16, 8);
+    pag.drawImage(context, ps, (i + 0.5) * 16, 8);
   }
   for (let i = 0; i < 4; i++) {
-    const ps = pag.generate(pattern, {
+    const ps = await pag.generateImagesPromise(pattern, {
       scale: 2,
       scalePattern: 2,
       seed: (i + 17) * 2002
     });
-    pag.draw(context, ps, (i + 0.5) * 32, 36);
+    pag.drawImage(context, ps, (i + 0.5) * 32, 36);
   }
   for (let i = 0; i < 2; i++) {
-    const ps = pag.generate(pattern, {
+    const ps = await pag.generateImagesPromise(pattern, {
       scale: 4,
       scalePattern: 2,
       seed: (i + 27) * 4004
     });
-    pag.draw(context, ps, (i + 0.5) * 64, 92);
+    pag.drawImage(context, ps, (i + 0.5) * 64, 92);
   }
 }

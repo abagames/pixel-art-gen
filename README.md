@@ -36,10 +36,16 @@ Include [build/index.js](https://github.com/abagames/pixel-art-gen/blob/master/b
 player.pixels = pag.generate([" x", "xxxx"]);
 ```
 
-or use `pag.generateImages` to get images.
+use `pag.generateImages` to get images,
 
 ```js
 player.images = pag.generateImages([" x", "xxxx"]);
+```
+
+or `generateImagesPromise` to wait for loading images.
+
+```js
+player.images = await pag.generateImagesPromise([" x", "xxxx"]);
 ```
 
 `Pixel` instance consists of rgb colors, an isEmpty boolean value and a style string.

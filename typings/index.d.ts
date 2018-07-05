@@ -1,6 +1,7 @@
 export declare let defaultOptions: PagOptions;
 export declare function generate(_patterns: string | string[], _options?: PagOptions): Pixel[][][];
 export declare function generateImages(_patterns: string | string[], _options?: PagOptions): HTMLImageElement[];
+export declare function generateImagesPromise(_patterns: string | string[], _options?: PagOptions): Promise<HTMLImageElement[]>;
 export declare function setSeed(_seed?: number): void;
 export declare function setDefaultOptions(_defaultOptions: any): void;
 export declare class Pixel {
