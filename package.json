@@ -6,17 +6,17 @@
   "typings": "typings/index.d.ts",
   "devDependencies": {
     "awesome-typescript-loader": "^5.2.0",
-    "gif-capture-canvas": "^1.0.0",
-    "sounds-some-sounds": "^1.0.2",
+    "gif-capture-canvas": "^1.0.1",
+    "sounds-some-sounds": "^1.0.3",
     "typescript": "^2.9.2",
-    "webpack": "^4.14.0",
+    "webpack": "^4.15.1",
     "webpack-cli": "^3.0.8",
     "webpack-serve": "^1.0.4"
   },
   "scripts": {
-    "start": "webpack-serve --sample=ships",
+    "start": "webpack-serve --sample=recoil",
     "build": "webpack",
-    "build_sample": "webpack --env.sample=ships"
+    "build_sample": "webpack --env.sample=recoil"
   },
   "author": "abagames",
   "license": "MIT",

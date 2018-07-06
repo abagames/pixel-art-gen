@@ -31,7 +31,7 @@ window.onload = () => {
 };
 
 function init() {
-  const seed = 9682886;
+  const seed = 7828523;
   pag.setSeed(seed);
   sss.init(seed);
   debug.enableShowingErrors();
