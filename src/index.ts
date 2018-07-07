@@ -13,6 +13,7 @@ export let defaultOptions: PagOptions = {
   scalePatternX: null,
   scalePatternY: null,
   isAddingEdgeFirst: false, // add an edge before randomize
+  isInnerEdge: false, // add an edge inside
   colorNoise: 0.1, // how often the color changes randomly
   colorLighting: 1, // lighting effect for the color
   edgeDarkness: 0.4, // darkness of the edge pixels
@@ -22,7 +23,9 @@ export let defaultOptions: PagOptions = {
   isUsingLetterForm: false, // using the letter form for the pattern
   letterFormChar: "x", // the pattern letter for the letter form
   letterFormFontFamily: "monospace", // font for the letter form
-  letterFormFontSize: 8,
+  letterFormFontSize: 16,
+  letterWidthRatio: 0.8, // for adjusting letter spacing
+  letterHeightRatio: 0.9,
   isRotatingLetterForm: false // rotate the letter form to the right
 };
 let generatedPixels = {};
@@ -257,7 +260,11 @@ function generatePatternsFromLetterForm(
   context.textBaseline = "top";
   times(pw, x => {
     times(ph, y => {
-      context.fillText(letters[y][x], x * fontSize, y * fontSize * 1.2);
+      context.fillText(
+        letters[y][x],
+        x * fontSize * options.letterWidthRatio,
+        y * fontSize * 1.2 * options.letterHeightRatio
+      );
     });
   });
   const pixels = context.getImageData(0, 0, w, h).data;
@@ -323,6 +330,7 @@ function generatePixels(patterns: string[], options, random: Random) {
     options.scalePatternX,
     options.scalePatternY,
     options.isAddingEdgeFirst,
+    options.isInnerEdge,
     random
   );
   if (options.isMirrorX) {
@@ -333,7 +341,7 @@ function generatePixels(patterns: string[], options, random: Random) {
     pixels = mirrorY(pixels, w, h);
     h *= 2;
   }
-  pixels = createEdge(pixels, w, h);
+  pixels = createEdge(pixels, w, h, false, options.isInnerEdge);
   if (
     options.scale != null ||
     options.scaleX != null ||
@@ -353,6 +361,7 @@ function createPixels(
   scalePatternX,
   scalePatternY,
   isAddingEdgeFirst,
+  isInnerEdge,
   random: Random
 ) {
   let pixels = timesMap(w, x => {
@@ -377,7 +386,7 @@ function createPixels(
     });
   });
   if (isAddingEdgeFirst) {
-    pixels = createEdgeFirst(pixels, w, h);
+    pixels = createEdge(pixels, w, h, isAddingEdgeFirst, isInnerEdge);
     pixels = map(pixels, l => map(l, p => Math.floor(p)));
   }
   return pixels;
@@ -395,29 +404,28 @@ function mirrorY(pixels: number[][], w, h) {
   );
 }
 
-function createEdge(pixels: number[][], w, h) {
-  return timesMap(w, x =>
-    timesMap(
-      h,
-      y =>
-        pixels[x][y] === 0 && checkAroundPixels(pixels, w, h, 1, x, y)
-          ? -1
-          : pixels[x][y]
-    )
-  );
-}
-
-function createEdgeFirst(pixels: number[][], w, h) {
-  return timesMap(w, x =>
-    timesMap(
-      h,
-      y =>
+function createEdge(pixels: number[][], w, h, isFirst, isInner) {
+  let cond;
+  if (isFirst) {
+    if (isInner) {
+      cond = (x, y) =>
+        Math.ceil(pixels[x][y]) === 1 &&
+        checkAroundPixels(pixels, w, h, 0, x, y);
+    } else {
+      cond = (x, y) =>
         pixels[x][y] === 0 &&
-        checkAroundPixels(pixels, w, h, null, x, y, p => p !== 0)
-          ? -1
-          : pixels[x][y]
-    )
-  );
+        checkAroundPixels(pixels, w, h, null, x, y, p => p !== 0);
+    }
+  } else {
+    if (isInner) {
+      cond = (x, y) =>
+        pixels[x][y] === 1 && checkAroundPixels(pixels, w, h, 0, x, y);
+    } else {
+      cond = (x, y) =>
+        pixels[x][y] === 0 && checkAroundPixels(pixels, w, h, 1, x, y);
+    }
+  }
+  return timesMap(w, x => timesMap(h, y => (cond(x, y) ? -1 : pixels[x][y])));
 }
 
 function scalePixels(pixels: number[][], pw, ph, options) {
@@ -449,7 +457,7 @@ function scalePixels(pixels: number[][], pw, ph, options) {
   times(Math.floor((scale - 1) / 2), () => {
     scaledPixels = scrapeEdge(scaledPixels, w, h);
   });
-  return createEdge(scaledPixels, w, h);
+  return createEdge(scaledPixels, w, h, false, options.isInnerEdge);
 }
 
 function scrapeEdge(pixels: number[][], w, h) {
@@ -716,6 +724,7 @@ export interface PagOptions {
   scalePatternX?: number;
   scalePatternY?: number;
   isAddingEdgeFirst?: boolean;
+  isInnerEdge?: boolean;
   colorNoise?: number;
   colorLighting?: number;
   edgeDarkness?: number;
@@ -726,5 +735,7 @@ export interface PagOptions {
   letterFormChar?: string;
   letterFormFontFamily?: string;
   letterFormFontSize?: number;
+  letterWidthRatio?: number;
+  letterHeightRatio?: number;
   isRotatingLetterForm?: boolean;
 }
