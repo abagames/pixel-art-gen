@@ -20,7 +20,7 @@ See the [sample code](https://github.com/abagames/pixel-art-gen/blob/master/src/
 Include [build/index.js](https://github.com/abagames/pixel-art-gen/blob/master/build/index.js) script or install from npm.
 
 ```
-% npm i pixel-art-gen
+> npm i pixel-art-gen
 ```
 
 `pag.generate` function returns a generated pixel art in a `Pixel` array ([rotated pattern index][x][y]),
@@ -103,6 +103,8 @@ Options described below are available.
   scalePattern: 1, // scale the pattern
   scalePatternX: null,
   scalePatternY: null,
+  isAddingEdgeFirst: false, // add an edge before randomize
+  isInnerEdge: false, // add an edge inside
   colorNoise: 0.1, // how often the color changes randomly
   colorLighting: 1, // lighting effect for the color
   edgeDarkness: 0.4, // darkness of the edge pixels
@@ -112,7 +114,9 @@ Options described below are available.
   isUsingLetterForm: false, // using the letter form for the pattern
   letterFormChar: "x", // the pattern letter for the letter form
   letterFormFontFamily: "monospace", // font for the letter form
-  letterFormFontSize: 8,
+  letterFormFontSize: 16,
+  letterWidthRatio: 0.8, // for adjusting letter spacing
+  letterHeightRatio: 0.9,
   isRotatingLetterForm: false // rotate the letter form to the right
 ```
 
