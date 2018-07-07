@@ -30,6 +30,8 @@ export interface PagOptions {
     scalePattern?: number;
     scalePatternX?: number;
     scalePatternY?: number;
+    isAddingEdgeFirst?: boolean;
+    isInnerEdge?: boolean;
     colorNoise?: number;
     colorLighting?: number;
     edgeDarkness?: number;
@@ -40,5 +42,7 @@ export interface PagOptions {
     letterFormChar?: string;
     letterFormFontFamily?: string;
     letterFormFontSize?: number;
+    letterWidthRatio?: number;
+    letterHeightRatio?: number;
     isRotatingLetterForm?: boolean;
 }
