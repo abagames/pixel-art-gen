@@ -12,6 +12,7 @@ export let defaultOptions: PagOptions = {
   scalePattern: 1, // scale the pattern
   scalePatternX: null,
   scalePatternY: null,
+  isAddingEdgeFirst: false, // add an edge before randomize
   colorNoise: 0.1, // how often the color changes randomly
   colorLighting: 1, // lighting effect for the color
   edgeDarkness: 0.4, // darkness of the edge pixels
@@ -321,6 +322,7 @@ function generatePixels(patterns: string[], options, random: Random) {
     h,
     options.scalePatternX,
     options.scalePatternY,
+    options.isAddingEdgeFirst,
     random
   );
   if (options.isMirrorX) {
@@ -350,9 +352,10 @@ function createPixels(
   h,
   scalePatternX,
   scalePatternY,
+  isAddingEdgeFirst,
   random: Random
 ) {
-  return timesMap(w, x => {
+  let pixels = timesMap(w, x => {
     const px = Math.floor((x - 1) / scalePatternX);
     return timesMap(h, y => {
       const py = Math.floor((y - 1) / scalePatternY);
@@ -362,7 +365,7 @@ function createPixels(
       const c = px < patterns[py].length ? patterns[py][px] : " ";
       let m = 0;
       if (c === "-") {
-        m = random.get() < 0.5 ? 1 : 0;
+        m = random.get() < 0.5 ? 1 : isAddingEdgeFirst ? 0.5 : 0;
       } else if (c === "x" || c === "X") {
         m = random.get() < 0.5 ? 1 : -1;
       } else if (c === "o" || c === "O") {
@@ -373,6 +376,11 @@ function createPixels(
       return m;
     });
   });
+  if (isAddingEdgeFirst) {
+    pixels = createEdgeFirst(pixels, w, h);
+    pixels = map(pixels, l => map(l, p => Math.floor(p)));
+  }
+  return pixels;
 }
 
 function mirrorX(pixels: number[][], w, h) {
@@ -393,6 +401,19 @@ function createEdge(pixels: number[][], w, h) {
       h,
       y =>
         pixels[x][y] === 0 && checkAroundPixels(pixels, w, h, 1, x, y)
+          ? -1
+          : pixels[x][y]
+    )
+  );
+}
+
+function createEdgeFirst(pixels: number[][], w, h) {
+  return timesMap(w, x =>
+    timesMap(
+      h,
+      y =>
+        pixels[x][y] === 0 &&
+        checkAroundPixels(pixels, w, h, null, x, y, p => p !== 0)
           ? -1
           : pixels[x][y]
     )
@@ -445,7 +466,15 @@ function scrapeEdge(pixels: number[][], w, h) {
   );
 }
 
-function checkAroundPixels(pixels: number[][], w, h, value, cx, cy) {
+function checkAroundPixels(
+  pixels: number[][],
+  w,
+  h,
+  value,
+  cx,
+  cy,
+  func = null
+) {
   const offsets = [[-1, 0], [1, 0], [0, -1], [0, 1]];
   return offsets.some(o => {
     const x = cx + o[0];
@@ -453,7 +482,7 @@ function checkAroundPixels(pixels: number[][], w, h, value, cx, cy) {
     if (x < 0 || x >= w || y < 0 || y >= h) {
       return false;
     }
-    return pixels[x][y] === value;
+    return func == null ? pixels[x][y] === value : func(pixels[x][y]);
   });
 }
 
@@ -686,6 +715,7 @@ export interface PagOptions {
   scalePattern?: number;
   scalePatternX?: number;
   scalePatternY?: number;
+  isAddingEdgeFirst?: boolean;
   colorNoise?: number;
   colorLighting?: number;
   edgeDarkness?: number;
