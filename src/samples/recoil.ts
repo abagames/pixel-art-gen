@@ -18,11 +18,12 @@ let titleImages: HTMLImageElement[];
 const screenSize = 128;
 let cursorPos = { x: 0, y: 0 };
 declare const WebFont: any;
+const fontFamily = "Roboto Mono";
 
 window.onload = () => {
   WebFont.load({
     google: {
-      families: ["Inconsolata"]
+      families: [fontFamily]
     },
     active: init,
     inactive: init,
@@ -51,10 +52,14 @@ function init() {
   //gcc.setOptions({ scale: 2 });
   titleImages = pag.generateImages("RECOIL", {
     isUsingLetterForm: true,
-    letterFormFontFamily: "'Inconsolata', monospace",
-    letterFormChar: "*",
+    letterFormFontFamily: `'${fontFamily}', monospace`,
     isMirrorY: false,
-    rotationNum: 1
+    rotationNum: 1,
+    isAddingEdgeFirst: true,
+    isInnerEdge: true,
+    scalePattern: 1.5,
+    letterWidthRatio: 0.7,
+    colorLighting: 0.5
   });
   setStars();
   document.addEventListener("mousedown", e => {
@@ -148,7 +153,7 @@ function update() {
     pag.drawImage(context, titleImages, 64, 40);
   }
   context.fillStyle = "#ace";
-  context.font = "9px 'Inconsolata', monospace";
+  context.font = `9px '${fontFamily}', monospace`;
   context.fillText(`${score}`, 5, 10);
   context.fillText(`+${addingScore}`, 5, 20);
   ticks++;
