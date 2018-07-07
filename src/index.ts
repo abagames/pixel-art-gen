@@ -12,6 +12,10 @@ export let defaultOptions: PagOptions = {
   scalePattern: 1, // scale the pattern
   scalePatternX: null,
   scalePatternY: null,
+  isRotatingRight: false, // rotate the pattern
+  isRotatingLeft: false,
+  isReverseX: false, // reverse the pattern
+  isReverseY: false,
   isAddingEdgeFirst: false, // add an edge before randomize
   isInnerEdge: false, // add an edge inside
   colorNoise: 0.1, // how often the color changes randomly
@@ -25,8 +29,7 @@ export let defaultOptions: PagOptions = {
   letterFormFontFamily: "monospace", // font for the letter form
   letterFormFontSize: 16,
   letterWidthRatio: 0.8, // for adjusting letter spacing
-  letterHeightRatio: 0.9,
-  isRotatingLetterForm: false // rotate the letter form to the right
+  letterHeightRatio: 0.9
 };
 let generatedPixels = {};
 let generatedImages = {};
@@ -272,25 +275,14 @@ function generatePatternsFromLetterForm(
   const lw = rect.ex - rect.bx + 1;
   const lh = rect.ey - rect.by + 1;
   let patterns = [];
-  if (options.isRotatingLetterForm) {
+  times(lh, y => {
+    let line = "";
     times(lw, x => {
-      let line = "";
-      times(lh, y => {
-        const pi = (x + rect.bx + (rect.ey - y) * w) * 4 + 3;
-        line += pixels[pi] > 0.5 ? options.letterFormChar : " ";
-      });
-      patterns.push(line);
+      const pi = (x + rect.bx + (y + rect.by) * w) * 4 + 3;
+      line += pixels[pi] > 0.5 ? options.letterFormChar : " ";
     });
-  } else {
-    times(lh, y => {
-      let line = "";
-      times(lw, x => {
-        const pi = (x + rect.bx + (y + rect.by) * w) * 4 + 3;
-        line += pixels[pi] > 0.5 ? options.letterFormChar : " ";
-      });
-      patterns.push(line);
-    });
-  }
+    patterns.push(line);
+  });
   return patterns;
 }
 
@@ -340,6 +332,15 @@ function generatePixels(patterns: string[], options, random: Random) {
   if (options.isMirrorY) {
     pixels = mirrorY(pixels, w, h);
     h *= 2;
+  }
+  if (options.isRotatingRight || options.isRotatingLeft) {
+    pixels = rotate(pixels, w, h, options.isRotatingRight);
+    const t = w;
+    w = h;
+    h = t;
+  }
+  if (options.isReverseX || options.isReverseY) {
+    pixels = reverse(pixels, w, h, options.isReverseX);
   }
   pixels = createEdge(pixels, w, h, false, options.isInnerEdge);
   if (
@@ -402,6 +403,18 @@ function mirrorY(pixels: number[][], w, h) {
   return timesMap(w, x =>
     timesMap(h * 2, y => (y < h ? pixels[x][y] : pixels[x][h * 2 - y - 1]))
   );
+}
+
+function rotate(pixels: number[][], w, h, toRight) {
+  return toRight
+    ? timesMap(h, x => timesMap(w, y => pixels[y][h - 1 - x]))
+    : timesMap(h, x => timesMap(w, y => pixels[w - 1 - y][x]));
+}
+
+function reverse(pixels: number[][], w, h, isX) {
+  return isX
+    ? timesMap(w, x => timesMap(h, y => pixels[w - 1 - x][y]))
+    : timesMap(w, x => timesMap(h, y => pixels[x][h - 1 - y]));
 }
 
 function createEdge(pixels: number[][], w, h, isFirst, isInner) {
@@ -723,6 +736,10 @@ export interface PagOptions {
   scalePattern?: number;
   scalePatternX?: number;
   scalePatternY?: number;
+  isRotatingRight?: boolean;
+  isRotatingLeft?: boolean;
+  isReverseX?: boolean;
+  isReverseY?: boolean;
   isAddingEdgeFirst?: boolean;
   isInnerEdge?: boolean;
   colorNoise?: number;
@@ -737,5 +754,4 @@ export interface PagOptions {
   letterFormFontSize?: number;
   letterWidthRatio?: number;
   letterHeightRatio?: number;
-  isRotatingLetterForm?: boolean;
 }

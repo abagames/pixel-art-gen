@@ -103,6 +103,10 @@ Options described below are available.
   scalePattern: 1, // scale the pattern
   scalePatternX: null,
   scalePatternY: null,
+  isRotatingRight: false, // rotate the pattern
+  isRotatingLeft: false,
+  isReverseX: false, // reverse the pattern
+  isReverseY: false,
   isAddingEdgeFirst: false, // add an edge before randomize
   isInnerEdge: false, // add an edge inside
   colorNoise: 0.1, // how often the color changes randomly
@@ -116,8 +120,7 @@ Options described below are available.
   letterFormFontFamily: "monospace", // font for the letter form
   letterFormFontSize: 16,
   letterWidthRatio: 0.8, // for adjusting letter spacing
-  letterHeightRatio: 0.9,
-  isRotatingLetterForm: false // rotate the letter form to the right
+  letterHeightRatio: 0.9
 ```
 
 You can set the default options of the library.

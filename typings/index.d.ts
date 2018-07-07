@@ -30,6 +30,10 @@ export interface PagOptions {
     scalePattern?: number;
     scalePatternX?: number;
     scalePatternY?: number;
+    isRotatingRight?: boolean;
+    isRotatingLeft?: boolean;
+    isReverseX?: boolean;
+    isReverseY?: boolean;
     isAddingEdgeFirst?: boolean;
     isInnerEdge?: boolean;
     colorNoise?: number;
@@ -44,5 +48,4 @@ export interface PagOptions {
     letterFormFontSize?: number;
     letterWidthRatio?: number;
     letterHeightRatio?: number;
-    isRotatingLetterForm?: boolean;
 }
