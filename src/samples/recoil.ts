@@ -1,8 +1,8 @@
 import * as pag from "../index";
 import * as debug from "./debug";
 import * as sss from "sounds-some-sounds";
+import * as WebFont from "webfontloader";
 //import * as gcc from "gif-capture-canvas";
-declare const require: any;
 
 let isInGame = false;
 const rotationNum = 16;
@@ -17,7 +17,6 @@ let context: CanvasRenderingContext2D;
 let titleImages: HTMLImageElement[];
 const screenSize = 128;
 let cursorPos = { x: 0, y: 0 };
-declare const WebFont: any;
 const fontFamily = "Roboto Mono";
 
 window.onload = () => {

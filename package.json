@@ -5,10 +5,12 @@
   "main": "build/index.js",
   "typings": "typings/index.d.ts",
   "devDependencies": {
+    "@types/webfontloader": "^1.6.29",
     "awesome-typescript-loader": "^5.2.0",
     "gif-capture-canvas": "^1.0.1",
     "sounds-some-sounds": "^1.0.3",
     "typescript": "^2.9.2",
+    "webfontloader": "^1.6.28",
     "webpack": "^4.15.1",
     "webpack-cli": "^3.0.8",
     "webpack-serve": "^1.0.4"
