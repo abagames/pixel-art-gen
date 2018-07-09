@@ -141,7 +141,7 @@ export function setSeed(_seed: number = 0) {
   seed = _seed;
 }
 
-export function setDefaultOptions(_defaultOptions) {
+export function setDefaultOptions(_defaultOptions: PagOptions) {
   forOwn(_defaultOptions, (v, k) => {
     defaultOptions[k] = v;
   });
@@ -253,8 +253,8 @@ function generatePatternsFromLetterForm(
   const pw = reduce(letters, (w, p) => Math.max(w, p.length), 0);
   const ph = letters.length;
   const fontSize = options.letterFormFontSize;
-  const w = Math.round(pw * fontSize);
-  const h = Math.round(ph * fontSize * 1.2);
+  const w = Math.round(pw * fontSize * options.letterWidthRatio);
+  const h = Math.round(ph * fontSize * 1.2 * options.letterHeightRatio);
   const canvas = document.createElement("canvas");
   canvas.width = w;
   canvas.height = h;
