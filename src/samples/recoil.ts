@@ -1,8 +1,8 @@
 import * as pag from "../index";
 import * as debug from "./debug";
 import * as sss from "sounds-some-sounds";
+import * as ppe from "particle-pattern-emitter";
 import * as WebFont from "webfontloader";
-//import * as gcc from "gif-capture-canvas";
 
 let isInGame = false;
 const rotationNum = 16;
@@ -33,6 +33,7 @@ window.onload = () => {
 function init() {
   const seed = 7828523;
   pag.setSeed(seed);
+  ppe.setSeed(seed);
   sss.init(seed);
   debug.enableShowingErrors();
   debug.initSeedUi(onSeedChanged);
@@ -48,7 +49,7 @@ function init() {
     rotationNum,
     scalePattern: 2
   });
-  //gcc.setOptions({ scale: 2 });
+  ppe.setOptions({ canvas });
   titleImages = pag.generateImages("RECOIL", {
     isUsingLetterForm: true,
     letterFormFontFamily: `'${fontFamily}', monospace`,
@@ -117,6 +118,7 @@ function update() {
   }
   context.fillStyle = "black";
   context.fillRect(0, 0, screenSize, screenSize);
+  ppe.update();
   const df = Math.sqrt(ticks / 1000 + 1);
   if (Math.random() < 0.03 * df) {
     setEnemy();
@@ -156,7 +158,6 @@ function update() {
   context.fillText(`${score}`, 5, 10);
   context.fillText(`+${addingScore}`, 5, 20);
   ticks++;
-  //gcc.capture(canvas);
 }
 
 function setPlayer() {
@@ -182,13 +183,14 @@ function setPlayer() {
         y: Math.sin(this.angle) * speed
       };
       shot.update = function() {
+        ppe.emit("t1", this.pos.x, this.pos.y, this.angle + Math.PI);
         forEach(getActors("enemy"), e => {
           let ox = e.pos.x - this.pos.x;
           let oy = e.pos.y - this.pos.y;
           if (Math.sqrt(ox * ox + oy * oy) < 10) {
             this.isAlive = false;
             e.isAlive = false;
-            setParticles(5, e.pos);
+            ppe.emit("e1", e.pos.x, e.pos.y);
             sss.playJingle("l2", true, 69, 12);
             score += addingScore;
             addingScore++;
@@ -198,7 +200,7 @@ function setPlayer() {
       shot.name = "shot";
       shot.priority = -1;
       actors.push(shot);
-      setParticles(2, this.pos, this.angle);
+      ppe.emit("m1", this.pos.x, this.pos.y, this.angle);
       sss.play("s1");
       this.vel.x = -shot.vel.x;
       this.vel.y = -shot.vel.y;
@@ -236,7 +238,7 @@ function setEnemy() {
       const oy = this.pos.y - player.pos.y;
       if (Math.sqrt(ox * ox + oy * oy) < 10) {
         isInGame = false;
-        setParticles(30, player.pos);
+        ppe.emit("e2", player.pos.x, player.pos.y, null, { sizeScale: 2 });
         sss.playJingle("s3", true, 60, 24);
         sss.stopBgm();
         player.isAlive = false;
@@ -252,39 +254,6 @@ function setEnemy() {
   enemy.name = "enemy";
   enemy.priority = 1;
   actors.push(enemy);
-}
-
-function setParticles(num, pos, angle = null) {
-  for (var i = 0; i < num; i++) {
-    const part: any = {};
-    part.images = pag.generateImages(["x"], {
-      isMirrorX: true,
-      colorLighting: 0.5,
-      edgeDarkness: 0.8,
-      value: 0.8
-    });
-    part.pos = { x: pos.x, y: pos.y };
-    if (angle == null) {
-      part.angle = randomFromTo(0, Math.PI * 2);
-    } else {
-      part.angle = angle + randomFromTo(-0.5, 0.5);
-    }
-    const speed = randomFromTo(0.5, 1);
-    part.vel = {
-      x: Math.cos(part.angle) * speed,
-      y: Math.sin(part.angle) * speed
-    };
-    part.ticks = randomFromTo(15, 30);
-    part.update = function() {
-      this.vel.x *= 0.98;
-      this.vel.y *= 0.98;
-      if (this.ticks-- < 0) {
-        this.isAlive = false;
-      }
-    };
-    part.priority = -2;
-    actors.push(part);
-  }
 }
 
 function setStars() {
@@ -348,6 +317,8 @@ function randomFromTo(from: number, to: number) {
 
 function onSeedChanged(seed: number) {
   pag.setSeed(seed);
+  ppe.reset();
+  ppe.setSeed(seed);
   sss.reset();
   sss.setSeed(seed);
   if (isInGame) {

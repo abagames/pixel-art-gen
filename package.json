@@ -8,6 +8,7 @@
     "@types/webfontloader": "^1.6.29",
     "awesome-typescript-loader": "^5.2.0",
     "gif-capture-canvas": "^1.0.1",
+    "particle-pattern-emitter": "^1.0.0",
     "sounds-some-sounds": "^1.0.3",
     "typescript": "^2.9.2",
     "webfontloader": "^1.6.28",
