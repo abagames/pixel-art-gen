@@ -17,10 +17,20 @@ Generate a pixel art from a simple pattern string.
 
 See the [sample code](https://github.com/abagames/pixel-art-gen/blob/master/src/samples/recoil.ts).
 
-Include [build/index.js](https://github.com/abagames/pixel-art-gen/blob/master/build/index.js) script or install from npm.
+Include [build/index.js](https://github.com/abagames/pixel-art-gen/blob/master/build/index.js) script,
+
+```html
+  <script src="https://unpkg.com/pixel-art-gen/build/index.js"></script>
+```
+
+or install from npm.
 
 ```
 > npm i pixel-art-gen
+```
+
+```js
+import * as pag from "pixel-art-gen";
 ```
 
 `pag.generate` function returns a generated pixel art in a `Pixel` array ([rotated pattern index][x][y]),
