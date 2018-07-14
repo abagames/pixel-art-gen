@@ -8,18 +8,19 @@
     "@types/webfontloader": "^1.6.29",
     "awesome-typescript-loader": "^5.2.0",
     "gif-capture-canvas": "^1.0.1",
+    "html-webpack-plugin": "^3.2.0",
     "particle-pattern-emitter": "^1.0.1",
     "sounds-some-sounds": "^1.0.4",
     "typescript": "^2.9.2",
     "webfontloader": "^1.6.28",
     "webpack": "^4.16.0",
     "webpack-cli": "^3.0.8",
-    "webpack-serve": "^1.0.4"
+    "webpack-serve": "^2.0.2"
   },
   "scripts": {
-    "start": "webpack-serve --sample=recoil",
+    "start": "webpack-serve --content docs",
     "build": "webpack",
-    "build_sample": "webpack --env.sample=recoil"
+    "build_sample": "webpack --env.sample"
   },
   "author": "abagames",
   "license": "MIT",
