@@ -283,8 +283,8 @@ class Turret extends Actor {
   async init() {
     this.pos = { x: 128, y: 240 };
     this.name = "Turret";
-    const image = await pag.generateImages("凸")[0];
-    this.setImage(image, "Turret");
+    const images = await pag.generateImagesPromise("凸");
+    this.setImage(images[0], "Turret");
   }
 
   update() {
@@ -322,14 +322,21 @@ class Turret extends Actor {
 let shotSpeed = 7;
 
 class Shot extends Actor {
+  images;
+
   async init() {
     this.pos = { x: turret.pos.x, y: turret.pos.y };
     this.name = "Shot";
-    const image = await pag.generateImages("][", { letterWidthRatio: 0.4 })[0];
-    this.setImage(image, "Shot");
+    this.images = await pag.generateImagesPromise("][", {
+      letterWidthRatio: 0.4
+    });
   }
 
   update() {
+    if (this.images != null) {
+      this.setImage(this.images[0], "Shot");
+      this.images = null;
+    }
     this.pos.y -= shotSpeed;
     super.update();
     getActors("Vader").forEach((v: Vader) => {
@@ -505,14 +512,19 @@ class Bullet extends Actor {
 let ufoSpeed = 1;
 
 class Ufo extends Actor {
+  images;
+
   async init() {
     this.pos = { x: -16, y: 32 };
     this.name = "Ufo";
-    const image = await pag.generateImages("皿")[0];
-    this.setImage(image, "Ufo");
+    this.images = await pag.generateImagesPromise("皿");
   }
 
   update() {
+    if (this.images != null) {
+      this.setImage(this.images[0], "Ufo");
+      this.images = null;
+    }
     this.pos.x += ufoSpeed;
     super.update();
   }
