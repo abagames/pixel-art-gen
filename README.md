@@ -13,6 +13,10 @@ Generate a pixel art from a simple pattern string.
 
 [![recoil screenshot](https://abagames.github.io/pixel-art-gen/recoil.gif)](https://abagames.github.io/pixel-art-gen/index.html?recoil)
 
+[vader](https://abagames.github.io/pixel-art-gen/index.html?vader)
+
+[![recoil screenshot](https://abagames.github.io/pixel-art-gen/vader.gif)](https://abagames.github.io/pixel-art-gen/index.html?vader)
+
 ### How to use
 
 See the [sample code](https://github.com/abagames/pixel-art-gen/blob/master/src/samples/recoil.ts).
