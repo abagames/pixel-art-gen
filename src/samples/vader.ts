@@ -47,7 +47,7 @@ function init() {
       sss.playEmpty();
     }
   );
-  const seed = 5067072;
+  const seed = 3607652;
   pag.setSeed(seed);
   ppe.setSeed(seed);
   sss.init(seed);
@@ -130,7 +130,7 @@ let vaderShotFreq = 1;
 let bulletSpeed = 1.5;
 
 function beginStage() {
-  sss.playJingle("s_bs", true);
+  sss.playJingle("s_bs", false, 69 - 12, 8);
   stage++;
   vaderSpeed = 2 + stage;
   vaderShotFreq = 1 / Math.sqrt(stage);
@@ -297,7 +297,7 @@ class Turret extends Actor {
       this.pos.x -= speed;
     }
     if (getActors("Shot").length <= 0) {
-      sss.play("s_s", 2, 60, null, 0.5);
+      sss.play("l_s", 2);
       new Shot().init();
     }
     super.update();
@@ -339,14 +339,14 @@ class Shot extends Actor {
     super.update();
     getActors("Vader").forEach((v: Vader) => {
       if (testCollide(this, v)) {
-        sss.play("e_vd");
+        sss.playJingle("h_vd", true, 69, 8);
         v.destroy();
         this.remove();
       }
     });
     getActors("Bullet").forEach((b: Bullet) => {
       if (testCollide(this, b)) {
-        sss.play("h_b");
+        sss.play("h_b", 1);
         b.destroy();
         this.remove();
       }
