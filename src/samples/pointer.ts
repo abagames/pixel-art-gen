@@ -47,6 +47,7 @@ export function init(
     "touchend",
     e => {
       e.preventDefault();
+      (e.target as any).click();
       onUp(e);
     },
     { passive: false }
