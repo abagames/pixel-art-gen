@@ -242,6 +242,7 @@ class Actor {
         this.collider = c;
       } else {
         this.collider = new Collider(image);
+        this.collider.anchor.x = this.collider.anchor.y = 0.5;
         this.colliders[name] = this.collider;
       }
     }
@@ -253,10 +254,7 @@ class Actor {
       this.sprite.y = this.pos.y;
     }
     if (this.collider != null) {
-      this.collider.setPos(
-        this.pos.x - this.size.x / 2,
-        this.pos.y - this.size.y / 2
-      );
+      this.collider.setPos(this.pos.x, this.pos.y);
     }
     if (
       this.pos.x < -32 ||

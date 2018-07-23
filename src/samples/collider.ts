@@ -1,4 +1,5 @@
 export default class Collider {
+  public anchor = { x: 0, y: 0 };
   private pos = { x: 0, y: 0 };
   private size = { x: 0, y: 0 };
   private pixelBits: number[][] = [];
@@ -40,8 +41,8 @@ export default class Collider {
   }
 
   setPos(x: number, y: number) {
-    this.pos.x = Math.floor(x);
-    this.pos.y = Math.floor(y);
+    this.pos.x = Math.floor(x - this.size.x * this.anchor.x);
+    this.pos.y = Math.floor(y - this.size.y * this.anchor.y);
   }
 
   test(other: Collider) {
