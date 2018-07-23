@@ -1,3 +1,7 @@
+let cacheIndex = 0;
+let cachedPixelBits: number[][][] = [];
+const cacheIndexProperty = "_ppcCachedIndex";
+
 export default class Collider {
   public anchor = { x: 0, y: 0 };
   private pos = { x: 0, y: 0 };
@@ -7,6 +11,10 @@ export default class Collider {
   constructor(image: HTMLImageElement) {
     this.size.x = image.width;
     this.size.y = image.height;
+    if (cacheIndexProperty in image) {
+      this.pixelBits = cachedPixelBits[image[cacheIndexProperty]];
+      return;
+    }
     const canvas = document.createElement("canvas");
     canvas.width = this.size.x;
     canvas.height = this.size.y;
@@ -38,6 +46,9 @@ export default class Collider {
       }
       this.pixelBits.push(bits);
     }
+    cachedPixelBits.push(this.pixelBits);
+    (image as any)[cacheIndexProperty] = cacheIndex;
+    cacheIndex++;
   }
 
   setPos(x: number, y: number) {
