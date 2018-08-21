@@ -106,7 +106,7 @@ function _generateImages(
   let patterns = Array.isArray(_patterns) ? _patterns : _patterns.split("\n");
   const jso = JSON.stringify({ patterns, options: _options });
   if (generatedImages[jso]) {
-    return generatedImages[jso];
+    return isUsingPromise ? Promise.resolve(generatedImages[jso]) : generatedImages[jso];
   }
   const pixels = generate(patterns, _options);
   const width = pixels[0].length;
